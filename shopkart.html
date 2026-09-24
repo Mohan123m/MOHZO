@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="utf-8">
+<title>MOHZO – Online Shopping</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+--bg:#f1f3f6;--card:#fff;--text:#212121;--muted:#717478;--brand:#2874f0;--accent:#ff9f00;--green:#388e3c;--line:#e0e0e0}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#121417;--card:#1c1f24;--text:#f0f0f0;--muted:#9aa0a6;--line:#2f343b}}
+:root[data-theme="dark"]{--bg:#121417;--card:#1c1f24;--text:#f0f0f0;--muted:#9aa0a6;--line:#2f343b}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+header{background:var(--brand);color:#fff;position:sticky;top:env(safe-area-inset-top,0px);z-index:10;padding:10px 14px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.logo{font-weight:800;font-size:22px;font-style:italic}
+.logo small{display:block;font-size:10px;font-weight:500;color:#ffe500}
+.search{flex:1;min-width:180px;display:flex}
+.search input{width:100%;padding:10px 14px;border:0;border-radius:3px;font-size:15px;background:#fff;color:#212121}
+.cartbtn{background:#fff;color:var(--brand);border:0;padding:9px 16px;border-radius:3px;font-weight:700;cursor:pointer}
+nav{background:var(--card);display:flex;gap:8px;overflow-x:auto;padding:10px 12px;box-shadow:0 1px 3px rgba(0,0,0,.12)}
+nav button{flex:none;border:0;background:none;color:var(--text);text-align:center;font-size:12px;font-weight:600;cursor:pointer;padding:4px 10px;border-radius:6px}
+nav button span{display:block;font-size:26px}
+nav button.on{color:var(--brand);background:rgba(40,116,240,.1)}
+.hero{margin:12px;border-radius:6px;padding:28px 22px;color:#fff;background:linear-gradient(120deg,#2874f0,#7b3fe4 60%,#ff6161)}
+.hero h1{margin:0 0 6px;font-size:26px}
+.hero p{margin:0 0 14px}
+.hero b{background:var(--accent);color:#000;padding:8px 16px;border-radius:3px;display:inline-block}
+h2{margin:18px 14px 8px;font-size:18px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;padding:0 12px 16px}
+.card{background:var(--card);border-radius:6px;padding:12px;display:flex;flex-direction:column;gap:4px}
+.img{height:120px;border-radius:4px;display:grid;place-items:center;font-size:58px}
+.name{font-size:14px;font-weight:600;margin-top:6px}
+.rate{font-size:12px}.rate i{background:var(--green);color:#fff;font-style:normal;padding:1px 6px;border-radius:3px;margin-right:6px}
+.price{font-weight:700}.price s{color:var(--muted);font-weight:400;font-size:13px;margin:0 4px}.price em{color:var(--green);font-style:normal;font-size:13px}
+.add{margin-top:auto;background:var(--accent);border:0;padding:9px;border-radius:3px;font-weight:700;cursor:pointer}
+.perks{display:flex;gap:10px;overflow-x:auto;padding:0 12px 12px}
+.perks div{flex:none;background:var(--card);padding:12px 16px;border-radius:6px;font-size:13px}
+footer{background:#172337;color:#b0b7c3;padding:22px 16px;font-size:13px;text-align:center}
+.toast{position:fixed;bottom:calc(20px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);background:#222;color:#fff;padding:10px 18px;border-radius:4px;opacity:0;transition:.3s;pointer-events:none}
+.toast.show{opacity:1}
+[hidden]{display:none!important}
+.stats{display:flex;gap:10px;padding:0 12px}.stats div{flex:1;background:var(--card);border-radius:6px;padding:14px;font-size:12px;color:var(--muted)}.stats b{display:block;font-size:22px;color:var(--text)}
+.form{background:var(--card);margin:0 12px;padding:14px;border-radius:6px;display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px}
+.form input,.form select{padding:10px;border:1px solid var(--line);border-radius:4px;background:var(--bg);color:var(--text);font-size:14px}
+.form button,.reg button{background:var(--brand);color:#fff;border:0;padding:10px;border-radius:4px;font-weight:700;cursor:pointer}
+.reg{background:var(--card);margin:14px 12px;padding:18px;border-radius:6px;display:grid;gap:10px}.reg input{padding:10px;border:1px solid var(--line);border-radius:4px;background:var(--bg);color:var(--text)}
+.mine{padding:0 12px 16px;display:grid;gap:8px}.row{background:var(--card);border-radius:6px;padding:10px 12px;display:flex;align-items:center;gap:10px;font-size:14px}.row span:first-child{font-size:26px}.row .n{flex:1}.row button{background:none;border:1px solid #d33;color:#d33;border-radius:4px;padding:6px 10px;cursor:pointer}
+.badge{font-size:11px;padding:2px 8px;border-radius:10px;color:#fff;margin-left:6px}.b-active{background:#388e3c}.b-pending{background:#f59e0b}.b-suspended{background:#d33}
+.row .ok{border-color:#388e3c;color:#388e3c}.row .warn{border-color:#f59e0b;color:#b45309}
+#drawer{position:fixed;inset:0;z-index:50}.shade{position:absolute;inset:0;background:rgba(0,0,0,.5)}
+aside{position:absolute;right:0;top:0;bottom:0;width:min(420px,100%);background:var(--bg);display:flex;flex-direction:column;padding-top:env(safe-area-inset-top,0px)}
+.dh{background:var(--brand);color:#fff;padding:14px;display:flex;justify-content:space-between;font-size:17px}.dh button{background:none;border:0;color:#fff;font-size:20px;cursor:pointer}
+.db{flex:1;overflow:auto;padding:10px}.df{padding:10px 12px calc(10px + env(safe-area-inset-bottom,0px));background:var(--card);box-shadow:0 -2px 6px rgba(0,0,0,.1)}
+.pay{width:100%;background:#fb641b;color:#fff;border:0;padding:13px;border-radius:3px;font-weight:700;font-size:15px;cursor:pointer}
+.line{display:flex;gap:10px;background:var(--card);padding:10px;border-radius:6px;margin-bottom:8px}.line .e{width:64px;height:64px;border-radius:6px;display:grid;place-items:center;font-size:34px;flex:none}.line .n{flex:1;font-size:14px}
+.qty{display:flex;align-items:center;gap:0;margin-top:auto;border:1px solid var(--brand);border-radius:4px;overflow:hidden}.qty button{background:none;border:0;color:var(--brand);font-size:18px;width:34px;padding:6px 0;cursor:pointer}.qty b{flex:1;text-align:center;font-size:14px}
+.qty.s{width:max-content;margin-top:6px;border:0;gap:6px}.qty.s button{border:1px solid var(--line);border-radius:50%;width:28px;height:28px;padding:0;color:var(--text)}.qty.s b{min-width:22px;flex:none}.qty.s a{margin-left:10px;color:var(--brand);font-size:13px;font-weight:600;cursor:pointer}
+.sum,.ck{background:var(--card);border-radius:6px;padding:12px;margin-top:8px;font-size:14px}.sum div{display:flex;justify-content:space-between;padding:4px 0}.sum .tot{border-top:1px dashed var(--line);margin-top:6px;padding-top:10px;font-weight:700;font-size:16px}
+.ck{display:grid;gap:8px}.g2{display:grid;grid-template-columns:1fr 1fr;gap:8px}.g2 input{min-width:0}.ty{display:flex;gap:16px;font-size:14px}.ty input{width:auto}.ck input{padding:10px;border:1px solid var(--line);border-radius:4px;background:var(--bg);color:var(--text);font-size:14px}
+.ups{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:8px}
+.u{border:2px dashed var(--line);border-radius:6px;height:86px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:12px;text-align:center;cursor:pointer;background-size:cover;background-position:center;color:var(--muted)}
+.u{position:relative;overflow:hidden}.u input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;font-size:0}.u span{font-size:24px;pointer-events:none}.u.done{border:2px solid var(--green);color:#fff;text-shadow:0 1px 3px #000;font-weight:700}
+.row.wrap{flex-wrap:wrap}.act{display:flex;gap:6px;flex-wrap:wrap}.kyc{flex-basis:100%;border-top:1px dashed var(--line);padding-top:10px;display:grid;gap:8px}
+.kv{display:flex;justify-content:space-between;font-size:13px}.kv span{color:var(--muted)}
+.thumbs{display:grid;grid-template-columns:repeat(auto-fit,minmax(90px,1fr));gap:8px}.thumbs figure{margin:0;text-align:center;font-size:11px;color:var(--muted)}.thumbs img{width:100%;height:80px;object-fit:cover;border-radius:4px;border:1px solid var(--line);cursor:zoom-in}
+#zoom{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:80;display:grid;place-items:center;padding:16px}#zoom img{max-width:100%;max-height:100%;border-radius:6px}
+.b-rejected{background:#6b7280}.b-accepted{background:#388e3c}
+.doc{display:flex;gap:10px;align-items:center;border:1px solid var(--line);border-radius:6px;padding:8px}
+.pv{width:64px;height:64px;flex:none;border-radius:6px;background:var(--bg) center/cover;display:grid;place-items:center;font-size:28px;border:2px dashed var(--line)}.pv.done{border:2px solid var(--green)}
+.di{flex:1;display:grid;gap:6px;font-size:14px}.di button{background:var(--brand);color:#fff;border:0;border-radius:4px;padding:9px;font-weight:600;font-size:13px;cursor:pointer}.di .cam{background:none;color:var(--brand);border:1px solid var(--brand)}
+.ups{display:grid;grid-template-columns:1fr;gap:8px}
+#cam{position:fixed;inset:0;background:#000;z-index:95;display:flex;flex-direction:column}#cv{flex:1;width:100%;min-height:0;object-fit:cover}
+.cb{display:flex;justify-content:space-between;align-items:center;padding:16px 20px calc(16px + env(safe-area-inset-bottom,0px));background:#000}.cb button{background:none;border:0;color:#fff;font-size:16px;width:70px;cursor:pointer}
+.cb .shot{width:68px;height:68px;border-radius:50%;background:#fff;border:5px solid #999}
+.abar{background:#172337;color:#fff;padding:14px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:env(safe-area-inset-top,0px);z-index:10;margin-bottom:10px}.abar button{background:#fff;color:#172337;border:0;border-radius:3px;padding:8px 14px;font-weight:700;cursor:pointer}
+#auth{position:fixed;inset:0;z-index:70;display:grid;place-items:center;padding:16px}
+.abox{position:relative;background:var(--card);border-radius:8px;width:min(400px,100%);padding:18px;max-height:90vh;overflow:auto}.abox>div{display:grid;gap:10px}.abox input{padding:11px;border:1px solid var(--line);border-radius:4px;background:var(--bg);color:var(--text);font-size:14px}
+.tabs{display:grid;grid-template-columns:1fr 1fr;border-bottom:2px solid var(--line)}.tabs button{background:none;border:0;padding:10px;font-weight:700;font-size:15px;color:var(--muted);cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px}.tabs button.on{color:var(--brand);border-color:var(--brand)}
+.lk{text-align:center;color:var(--brand);cursor:pointer;font-size:14px}
+.vr{display:flex;gap:6px}.vr input{flex:1;min-width:0}.vr button{background:var(--brand);color:#fff;border:0;border-radius:4px;padding:0 14px;font-weight:700;cursor:pointer;font-size:13px}
+.vs{font-size:12px;margin-top:-4px}.vs.ok{color:var(--green)}.vs.bad{color:#d33}.gl{color:var(--brand);font-size:13px;font-weight:600}
+.gv{display:grid;gap:6px;font-size:13px}.gv label{display:flex;gap:8px;align-items:center}
+.steps{display:flex;gap:6px}.steps span{flex:1;text-align:center;padding:6px 2px;border-radius:4px;background:var(--bg);color:var(--muted);font-weight:700;font-size:11px}.steps span.on{background:var(--green);color:#fff}
+.st{border:1px solid var(--line);border-radius:6px;padding:10px;display:grid;gap:8px}.ekd{display:grid;gap:8px}.cons{display:flex;gap:8px;font-size:12px;align-items:flex-start}.cons input{width:auto;padding:0;margin-top:2px}
+.reg select{padding:10px;border:1px solid var(--line);border-radius:4px;background:var(--bg);color:var(--text)}.reg input[readonly],.reg select:disabled{opacity:.7}
+.form textarea{padding:10px;border:1px solid var(--line);border-radius:4px;background:var(--bg);color:var(--text);font-size:14px;font-family:inherit;resize:vertical}
+.more{grid-column:1/-1;background:var(--card);border:1px solid var(--brand);color:var(--brand);padding:12px;border-radius:4px;font-weight:700;cursor:pointer;margin:4px 0}
+.vr select{flex:1;padding:10px;border:1px solid var(--line);border-radius:4px;background:var(--bg);color:var(--text)}
+.pims{display:flex;gap:10px;flex-wrap:wrap}.pims div{position:relative;width:64px;height:64px;border-radius:6px;background-size:cover;background-position:center;border:1px solid var(--line)}.pims b{position:absolute;top:-7px;right:-7px;background:#d33;color:#fff;border-radius:50%;width:20px;height:20px;font-size:14px;display:grid;place-items:center;cursor:pointer}
+.img{overflow:hidden;cursor:pointer}.img img{width:100%;height:100%;object-fit:cover}.name{cursor:pointer}
+#pd{position:fixed;inset:0;z-index:60}.pdbox{position:absolute;right:0;top:0;bottom:0;width:min(460px,100%);background:var(--bg);display:flex;flex-direction:column;padding-top:env(safe-area-inset-top,0px)}
+.pdc{flex:1;overflow:auto;padding:12px;display:grid;gap:8px;align-content:start}.pdc h3{margin:4px 0}.pdi{height:260px;border-radius:6px;display:grid;place-items:center;font-size:96px;overflow:hidden}.pdi img{width:100%;height:100%;object-fit:contain}
+.pdt{display:flex;gap:6px}.pdt img{width:56px;height:56px;object-fit:cover;border-radius:4px;border:2px solid var(--line);cursor:pointer}.pdt img.on{border-color:var(--brand)}
+.szs{display:flex;gap:8px;flex-wrap:wrap}.szs button{min-width:44px;padding:9px 12px;border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:6px;cursor:pointer;font-weight:600}.szs button.on{border-color:var(--brand);color:var(--brand);background:rgba(40,116,240,.1)}
+.pdd{white-space:pre-wrap;font-size:14px;margin:0;background:var(--card);padding:10px;border-radius:6px}.pdf2{display:flex;gap:8px}.pdf2 .qty{flex:1;margin:0}.pdf2 .pay{flex:2}
+.sbar{background:rgba(40,116,240,.12);color:var(--text);margin:10px 12px 0;padding:10px 12px;border-radius:6px;display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;font-size:13px}.sbar button{background:var(--brand);color:#fff;border:0;border-radius:4px;padding:8px 12px;font-weight:700;cursor:pointer}
+.mg{display:flex;gap:6px;margin-top:6px}.mg button{flex:1;border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:4px;padding:7px 4px;font-size:12px;cursor:pointer}.mg button:last-child{color:#d33;border-color:#d33;flex:.5}
+.card.hid{opacity:.55}.hb{background:#6b7280;color:#fff;font-size:10px;padding:2px 8px;border-radius:8px;align-self:flex-start;margin-top:4px}
+#ed{position:fixed;inset:0;z-index:75;display:grid;place-items:center;padding:16px}.abox textarea,.abox select{padding:11px;border:1px solid var(--line);border-radius:4px;background:var(--bg);color:var(--text);font-size:14px;font-family:inherit}
+.sh{display:flex;justify-content:space-between;align-items:center;padding-right:12px;gap:8px}.sh button{background:var(--card);color:var(--text);border:1px solid var(--line);border-radius:4px;padding:8px 12px;font-weight:700;cursor:pointer}
+.b-printed{background:#0ea5e9}.b-dispatched{background:#6366f1}.b-received{background:#8b5cf6}.b-out{background:#f59e0b}.b-delivered{background:#388e3c}
+.trkb{border:1px solid var(--brand);color:var(--brand);background:none;border-radius:4px;padding:6px 12px;cursor:pointer;font-weight:700}
+#trk{position:fixed;inset:0;z-index:78;display:grid;place-items:center;padding:16px}#lab{position:fixed;inset:0;z-index:82;display:grid;place-items:center;padding:12px}
+.lbx{position:relative;background:#fff;color:#000;width:min(420px,100%);max-height:92vh;overflow:auto;border-radius:8px;padding:14px}
+.tl{display:grid;padding-left:4px}.tls{display:flex;gap:12px;padding-bottom:16px;position:relative;color:var(--muted)}.tls:not(:last-child)::before{content:"";position:absolute;left:11px;top:24px;bottom:0;width:2px;background:var(--line)}.tls.done::before{background:var(--green)}
+.dot{width:24px;height:24px;border-radius:50%;background:var(--line);color:#fff;display:grid;place-items:center;font-size:13px;flex:none;z-index:1}.tls.done .dot{background:var(--green)}.tls.cur .dot{background:var(--brand);box-shadow:0 0 0 4px rgba(40,116,240,.25)}.tls.done,.tls.cur{color:var(--text)}
+.row input.ot{width:90px;padding:8px;border:1px solid var(--line);border-radius:4px;background:var(--bg);color:var(--text)}
+@media print{body>*:not(#lab){display:none!important}#lab{position:static!important;display:block!important;padding:0}#lab .shade,.noprint{display:none!important}.lbx{max-height:none!important;width:100%!important;padding:0}}
+.av{width:46px;height:46px;border-radius:50%;background:var(--brand);color:#fff;display:grid;place-items:center;font-weight:700;font-size:18px;flex:none}
+.idg{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px;padding:0 12px 16px}
+.idc{width:100%;max-width:300px;margin:0 auto 12px;border:1px solid #bbb;border-radius:12px;overflow:hidden;background:#fff;color:#000;font-family:system-ui,sans-serif}
+.idh{background:#2874f0;color:#fff;padding:10px 14px;display:flex;justify-content:space-between;align-items:center}.idh b{font-size:20px;font-style:italic}.idh span{font-size:10px;letter-spacing:1px}
+.idb{padding:14px;text-align:center}.idp{width:92px;height:110px;object-fit:cover;border-radius:6px;border:2px solid #2874f0;margin:0 auto 8px;display:block}.av2{display:grid;place-items:center;background:#2874f0;color:#fff;font-size:40px;font-weight:700}
+.idn{font-size:18px;font-weight:800}.ids{font-size:12px;color:#555;margin-bottom:8px}.idt{width:100%;font-size:12px;text-align:left;border-collapse:collapse;margin-bottom:8px}.idt td{padding:2px 0}.idt td:first-child{color:#555;width:42%}
+.idf{font-size:12px;letter-spacing:3px;margin-top:2px}.idsg{border-top:1px solid #000;margin-top:34px;text-align:center;font-size:11px;padding-top:2px}.idb p{margin:0 0 6px}
+</style>
+</head>
+<body>
+<header id="top">
+  <div class="logo">MOHZO<small>Explore <b>Plus</b></small></div>
+  <div class="search"><input id="q" placeholder="Products, brands aur categories search karein"></div>
+  <button class="cartbtn" id="acc">👤 Login</button>
+  <button class="cartbtn" id="role">🏪 Seller Account</button>
+  <button class="cartbtn" id="cart">🛒 Cart (<span id="cnt">0</span>)</button>
+</header>
+<div id="buyer"><div class="sbar" id="sbar" hidden></div><nav id="cats"></nav>
+<section class="hero"><h1>Big Billion Sale 🎉</h1><p>Electronics, fashion aur home par 80% tak ki chhoot</p><b>Abhi Shop Karein</b></section>
+<div class="perks"><div>🚚 Free Delivery</div><div>↩️ 7 Din Return</div><div>💳 EMI Available</div><div>✅ 100% Original</div></div>
+<h2 id="title">Top Deals</h2>
+<div class="grid" id="grid"></div></div>
+<div id="seller" hidden>
+ <div class="tabs" id="stabs" style="margin:10px 12px 0;background:var(--card)"><button id="t-sl" onclick="setSTab('login')">Seller Login</button><button id="t-sn" onclick="setSTab('new')">New Seller Account</button></div>
+ <div class="reg" id="slog" hidden><h2 style="margin:0">Seller Login</h2>
+  <input id="sid" placeholder="Seller ID (jaise MZS10004)" autocapitalize="characters" autocomplete="username" style="text-transform:uppercase">
+  <input id="spw" type="password" placeholder="Password" autocomplete="current-password" onkeydown="if(event.key=='Enter')sellerLogin()">
+  <button onclick="sellerLogin()">Login</button><small style="color:var(--muted)">Seller ID aur password account banate waqt milte hain. Bhool gaye toh admin se reset karayein.</small></div>
+ <div class="reg" id="reg"><h2 style="margin:0">Seller Account</h2>
+ <input id="store" placeholder="Store ka naam"><input id="ph" placeholder="Mobile number" inputmode="tel" maxlength="10">
+ <div style="display:flex;justify-content:space-between;align-items:center"><b>e-KYC</b><a class="lk" onclick="resetKyc()">Restart</a></div>
+ <div class="steps"><span id="s1">1 Aadhaar</span><span id="s2">2 PAN</span><span id="s3">3 Bank</span><span id="s4">4 Selfie</span></div>
+ <div class="st"><b>1. Aadhaar e-KYC</b>
+  <div class="vr"><input id="sa" placeholder="Aadhaar number (12 digit)" inputmode="numeric" maxlength="14"><button type="button" onclick="verAadhaar()">Send OTP</button></div>
+  <label class="cons"><input type="checkbox" id="cons"> Main UIDAI se apna Aadhaar e-KYC data lene ki sahmati deta/deti hoon.</label>
+  <div class="vs" id="vsa"></div>
+  <div class="vr" id="otpbox" hidden><input id="otp" placeholder="6 digit OTP" inputmode="numeric" maxlength="6"><button type="button" onclick="confAadhaar()">Confirm OTP</button></div>
+  <div class="ekd" id="ekd" hidden><small style="color:var(--muted)">Asli e-KYC mein ye details UIDAI se apne aap aati hain. Demo mein khud bharein.</small>
+   <input id="kn" placeholder="Full name (as per Aadhaar) *"><input id="kdob" type="date" aria-label="Date of birth"><select id="kg"><option>Male</option><option>Female</option><option>Other</option></select><input id="kad" placeholder="Full address (as per Aadhaar) *">
+   <button type="button" id="ekb" onclick="confEkyc()" style="background:var(--brand);color:#fff;border:0;border-radius:4px;padding:10px;font-weight:700;cursor:pointer">Confirm e-KYC details</button></div>
+ </div>
+ <div class="st"><b>2. PAN verification</b>
+  <div class="vr"><input id="sp" placeholder="PAN number (ABCDE1234F)" maxlength="10" style="text-transform:uppercase"><button type="button" onclick="verPan()">Verify</button></div><div class="vs" id="vsp"></div>
+  <div class="gv" id="panman" hidden><a class="gl" href="https://eportal.incometax.gov.in/iec/foservices/#/pre-login/verifyYourPAN/" target="_blank" rel="noopener">🔗 Income Tax portal par PAN verify karein ↗</a><small style="color:var(--muted)">Wahan PAN, naam, date of birth aur mobile number daalkar OTP se verify hota hai.</small><label><input type="checkbox" id="pdecl" onchange="panDecl(this)"> Maine Income Tax portal par PAN verify kar liya hai</label></div></div>
+ <div class="st"><b>3. Bank account verification</b>
+  <input id="ba" placeholder="Bank account number" inputmode="numeric" maxlength="18"><div class="vr"><input id="bi" placeholder="IFSC code (SBIN0001234)" maxlength="11" style="text-transform:uppercase"><button type="button" onclick="verBank()">Verify</button></div><div class="vs" id="vsb"></div></div>
+ <div class="st"><b>4. Live selfie</b>
+  <div style="display:flex;gap:10px;align-items:center"><div class="pv" id="pv-selfie">🤳</div><button type="button" onclick="selfieGo()" style="flex:1;background:var(--brand);color:#fff;border:0;border-radius:4px;padding:11px;font-weight:700;cursor:pointer">📷 Take live selfie</button></div><div class="vs" id="vs4"></div></div>
+ <button onclick="signup()">Submit Now</button></div>
+ <div id="dash" hidden>
+  <div class="sh"><h2 id="sname" style="margin:14px 14px 8px"></h2><button onclick="sellerLogout()">Logout</button></div>
+  <div class="sum" id="credbox" hidden style="margin:0 12px 8px"></div>
+  <div class="stats"><div><b id="sp">0</b>Products</div><div><b id="so">0</b>Orders</div><div><b id="sr">₹0</b>Revenue</div></div>
+  <h2>Naya Product Add Karein</h2>
+  <div class="form" style="grid-template-columns:1fr">
+   <div class="pims" id="pims"></div>
+   <button type="button" onclick="pickImg()" style="background:none;color:var(--brand);border:1px solid var(--brand);border-radius:4px;padding:10px;font-weight:700;cursor:pointer">📷 Product images upload karein (max 4)</button>
+   <input id="fn" placeholder="Product title *">
+   <textarea id="fd" rows="3" placeholder="Description (product ke bare mein likhein)"></textarea>
+   <select id="fc"><option>Mobiles</option><option>Fashion</option><option>Electronics</option><option>Home</option><option>Toys</option></select>
+   <input id="fs" placeholder="Size (comma se alag): S, M, L, XL  ya  64GB, 128GB">
+   <div class="g2"><input id="fm" type="number" inputmode="decimal" placeholder="MRP ₹ *"><input id="fdc" type="number" inputmode="decimal" placeholder="Discount %"></div>
+   <input id="fp" type="number" inputmode="decimal" placeholder="Selling price ₹ (MRP aur discount se auto)">
+   <input id="fe" placeholder="Emoji (photo na ho toh)" maxlength="2">
+   <button onclick="addProd()">Add Product</button></div>
+  <h2>Bulk Upload (5,000 tak)</h2>
+  <div class="form" style="grid-template-columns:1fr"><small style="color:var(--muted)">Har line: naam, category, price, MRP, emoji, sizes (S|M|L), description. Category: Mobiles / Fashion / Electronics / Home / Toys. Price ke baad ki fields optional.</small>
+   <textarea id="bulk" rows="5" placeholder="Cotton Kurta, Fashion, 499, 999, 👗&#10;LED Bulb 9W, Home, 99, 199"></textarea>
+   <div class="vr"><button type="button" onclick="bulkAdd()">Import Products</button><button type="button" onclick="pickCsv()" style="background:none;color:var(--brand);border:1px solid var(--brand)">📁 CSV file</button></div>
+   <div class="vr"><select id="dn"><option>100</option><option>1000</option><option>5000</option></select><button type="button" onclick="demoGen()">Demo products banayein</button></div>
+   <div class="vs" id="bst"></div></div>
+  <h2>Aapke Orders (Buyer Details)</h2><div class="mine" id="sord"></div>
+  <h2>Aapke Products</h2>
+  <div class="vr" style="padding:0 12px 8px"><input id="ms" placeholder="Apne products search karein" style="padding:10px;border:1px solid var(--line);border-radius:4px;background:var(--card);color:var(--text)"><button type="button" id="dall" onclick="delAll()" style="background:#d33">Sabhi products delete karein</button></div>
+  <div class="mine" id="mine"></div>
+ </div>
+</div>
+<div id="drawer" hidden><div class="shade" onclick="closeCart()"></div><aside>
+ <div class="dh"><b>🛒 Aapka Cart</b><button onclick="closeCart()">✕</button></div>
+ <div class="db">
+  <div id="empty" style="text-align:center;padding:40px 10px;color:var(--muted)"><div style="font-size:56px">🛒</div>Cart khali hai<br><small>Kuch products add karein</small></div>
+  <div id="full" hidden><div id="lines"></div><div class="sum" id="sum"></div>
+   <div class="ck"><div class="g2"><input id="cn" placeholder="Full name *" autocomplete="name"><input id="cp" placeholder="Mobile number *" inputmode="tel" maxlength="10" autocomplete="tel"></div>
+   <input id="ce" type="email" placeholder="Email (optional)" autocomplete="email">
+   <div class="g2"><input id="cpin" placeholder="Pincode *" inputmode="numeric" maxlength="6"><input id="cc" placeholder="City *"></div>
+   <input id="cs" placeholder="State *">
+   <input id="ch" placeholder="House / Flat / Building no. *">
+   <input id="ca" placeholder="Area, Colony, Street *">
+   <input id="cl" placeholder="Landmark (optional)">
+   <div class="ty"><label><input type="radio" name="aty" value="Home" checked> 🏠 Home</label><label><input type="radio" name="aty" value="Work"> 🏢 Work</label></div>
+   <small>Payment: Cash on Delivery</small></div></div>
+  <div id="ok" hidden style="text-align:center;padding:40px 10px"><div style="font-size:64px">✅</div><h3>Order Place Ho Gaya!</h3><p>Order ID: <b id="oid"></b></p><div class="sum" id="oaddr" style="text-align:left"></div><p style="color:var(--muted)">Order seller ko bhej diya gaya hai. Seller ke accept karne par confirm hoga.</p><button class="pay" style="background:var(--brand);margin-bottom:8px" onclick="closeCart();showAcct()">📍 My Orders / Track</button><button class="pay" onclick="closeCart()">Shopping Jaari Rakhein</button></div>
+ </div>
+ <div class="df" id="foot"><button class="pay" id="pay" onclick="placeOrder()">Place Order</button></div>
+</aside></div>
+<div id="cam" hidden><video id="cv" autoplay playsinline muted></video><div class="cb"><button onclick="camClose()">Cancel</button><button class="shot" onclick="camShot()" aria-label="Capture"></button><span style="width:70px"></span></div></div>
+<div id="lab" hidden><div class="shade noprint" onclick="closeLabel()"></div><div class="lbx"><div id="lbl"></div><div class="vr noprint" style="margin-top:10px"><button type="button" onclick="doPrint()">🖨 Print</button><button type="button" style="background:none;color:#2874f0;border:1px solid #2874f0" onclick="closeLabel()">Close</button></div></div></div>
+<div id="trk" hidden><div class="shade" onclick="closeTrk()"></div><div class="abox"><div id="trkc"></div></div></div>
+<div id="ed" hidden><div class="shade" onclick="closeEd()"></div><div class="abox"><div>
+ <div style="display:flex;justify-content:space-between;align-items:center"><b style="font-size:16px">✏️ Product Edit</b><a class="lk" onclick="closeEd()">✕ Close</a></div>
+ <div class="pims" id="epims"></div>
+ <button type="button" onclick="pickImg(()=>eimgs,eimRender)" style="background:none;color:var(--brand);border:1px solid var(--brand);border-radius:4px;padding:10px;font-weight:700;cursor:pointer">📷 Images add karein (max 4)</button>
+ <input id="et" placeholder="Product title *"><textarea id="eds" rows="3" placeholder="Description"></textarea>
+ <select id="ec"><option>Mobiles</option><option>Fashion</option><option>Electronics</option><option>Home</option><option>Toys</option></select>
+ <input id="es" placeholder="Size (comma se alag): S, M, L, XL">
+ <div class="g2"><input id="em" type="number" inputmode="decimal" placeholder="MRP ₹ *"><input id="edc" type="number" inputmode="decimal" placeholder="Discount %"></div>
+ <input id="ep" type="number" inputmode="decimal" placeholder="Selling price ₹">
+ <button class="pay" onclick="saveEd()">Save Changes</button></div></div></div>
+<div id="pd" hidden><div class="shade" onclick="closePD()"></div><div class="pdbox"><div class="dh"><b>Product Details</b><button onclick="closePD()">✕</button></div><div class="pdc" id="pdb"></div><div class="df" id="pdf"></div></div></div>
+<div id="auth" hidden><div class="shade" onclick="closeAuth()"></div><div class="abox">
+ <div id="af">
+  <div class="tabs"><button id="t-login" onclick="setTab('login')">Login</button><button id="t-signup" onclick="setTab('signup')">Sign Up</button></div>
+  <input id="un" class="su" placeholder="Full name *" autocomplete="name">
+  <input id="um" placeholder="Mobile number *" inputmode="tel" maxlength="10" autocomplete="tel">
+  <input id="ue" class="su" type="email" placeholder="Email (optional)" autocomplete="email">
+  <input id="up" type="password" placeholder="Password *" autocomplete="current-password" onkeydown="if(event.key=='Enter')submitAuth()">
+  <input id="up2" class="su" type="password" placeholder="Confirm password *" autocomplete="new-password">
+  <button class="pay" id="abtn" onclick="submitAuth()">Login</button>
+  <a class="lk" onclick="closeAuth()">Cancel</a>
+ </div>
+ <div id="av" hidden>
+  <div style="display:flex;justify-content:space-between;align-items:center"><b id="an" style="font-size:17px"></b><a class="lk" onclick="closeAuth()">✕ Close</a></div>
+  <small id="ad" style="color:var(--muted)"></small>
+  <b>My Orders</b><div id="ao" class="mine" style="padding:0"></div>
+  <button class="pay" style="background:#d33" onclick="logout()">Logout</button>
+ </div>
+</div></div>
+<div id="zoom" hidden onclick="this.hidden=true"><img id="zimg" alt=""></div>
+<div id="dlogin" hidden><div class="reg" style="max-width:420px;margin:40px auto"><h2 style="margin:0">🚚 Delivery Login</h2>
+ <input id="did" placeholder="Delivery ID (jaise DLV101)" autocapitalize="characters" style="text-transform:uppercase"><input id="dpw" type="password" placeholder="Password" onkeydown="if(event.key=='Enter')riderLogin()">
+ <button onclick="riderLogin()">Login</button><a onclick="setMode('buyer')" style="text-align:center;color:var(--brand);cursor:pointer;font-size:14px">← Back to store</a></div></div>
+<div id="dpanel" hidden><div class="abar"><b>🚚 MOHZO Delivery · <span id="dname"></span></b><button onclick="dLogout()">Logout</button></div>
+ <div class="stats"><div><b id="d1">0</b>Pickup ready</div><div><b id="d2">0</b>Meri active</div><div><b id="d3">0</b>Delivered</div></div>
+ <h2>Pickup ke liye ready (Dispatched)</h2><div class="mine" id="dq"></div>
+ <h2>Meri deliveries</h2><div class="mine" id="dm"></div></div>
+<div id="alogin" hidden><div class="reg" style="max-width:420px;margin:40px auto"><h2 style="margin:0">🛡️ Admin Login</h2>
+ <input id="au" placeholder="Admin ID" autocomplete="username"><input id="apw" type="password" placeholder="Password" autocomplete="current-password" onkeydown="if(event.key=='Enter')adminLogin()">
+ <button onclick="adminLogin()">Login</button><a onclick="setMode('buyer')" style="text-align:center;color:var(--brand);cursor:pointer;font-size:14px">← Back to store</a></div></div>
+<div id="admin" hidden>
+ <div class="abar"><b>🛡️ MOHZO Admin Panel</b><button onclick="adminLogout()">Logout</button></div>
+ <div class="tabs" id="atabs" style="margin:0 12px 10px;background:var(--card);grid-template-columns:repeat(3,1fr)"><button id="at-s" onclick="setATab('s')">Sellers</button><button id="at-r" onclick="setATab('r')">Delivery Boys</button><button id="at-i" onclick="setATab('i')">ID Cards</button></div>
+ <div id="atab-s"><div class="stats"><div><b id="as">0</b>Sellers</div><div><b id="ap">0</b>Pending</div><div><b id="ag">₹0</b>Sales (GMV)</div><div><b id="ac">₹0</b>Commission 10%</div></div>
+ <div class="sum" id="pwbox" hidden style="margin:0 12px 10px"></div>
+ <h2>Seller Accounts</h2><div class="mine" id="slist"></div></div>
+ <div id="atab-r" hidden>
+  <div class="stats"><div><b id="r1">0</b>Delivery Boys</div><div><b id="r2">0</b>Active</div><div><b id="r3">0</b>Delivered</div></div>
+  <div style="padding:12px"><button class="pay" style="background:var(--brand)" onclick="toggleRReg()">+ Register Delivery Boy</button></div>
+  <div class="sum" id="rcred" hidden style="margin:0 12px 10px"></div>
+  <div class="reg" id="rreg" hidden><h2 style="margin:0">Delivery Boy Registration</h2>
+   <input id="rn" placeholder="Full name *"><div class="g2"><input id="rph" placeholder="Mobile number *" inputmode="tel" maxlength="10"><select id="rbg"><option value="">Blood group</option><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>O+</option><option>O-</option><option>AB+</option><option>AB-</option></select></div>
+   <input id="rad" placeholder="Full address *">
+   <b>Documents</b>
+   <input id="rpan" placeholder="PAN number (ABCDE1234F) *" maxlength="10" style="text-transform:uppercase">
+   <input id="raad" placeholder="Aadhaar number (12 digit) *" inputmode="numeric" maxlength="14">
+   <input id="rdl" placeholder="Driving licence no. (MH1420110062821) *" maxlength="20" style="text-transform:uppercase">
+   <label style="font-size:12px;color:var(--muted)">Driving licence expiry date *<input id="rdlx" type="date" style="width:100%;margin-top:4px"></label>
+   <div class="ups"><div class="doc"><div class="pv" id="rpv-photo">👤</div><div class="di"><b>Passport size photo</b><button type="button" onclick="rpick('photo')">📁 Click here to upload</button></div></div><div class="doc"><div class="pv" id="rpv-pan">💳</div><div class="di"><b>PAN card</b><button type="button" onclick="rpick('pan')">📁 Click here to upload</button></div></div><div class="doc"><div class="pv" id="rpv-af">🪪</div><div class="di"><b>Aadhaar card front</b><button type="button" onclick="rpick('af')">📁 Click here to upload</button></div></div><div class="doc"><div class="pv" id="rpv-ab">🪪</div><div class="di"><b>Aadhaar card back</b><button type="button" onclick="rpick('ab')">📁 Click here to upload</button></div></div><div class="doc"><div class="pv" id="rpv-dlf">🚗</div><div class="di"><b>Driving licence front</b><button type="button" onclick="rpick('dlf')">📁 Click here to upload</button></div></div><div class="doc"><div class="pv" id="rpv-dlb">🚗</div><div class="di"><b>Driving licence back</b><button type="button" onclick="rpick('dlb')">📁 Click here to upload</button></div></div></div>
+   <button onclick="registerRider()">Register Delivery Boy</button></div>
+  <h2>Delivery Boys</h2><div class="mine" id="rlist"></div></div>
+ <div id="atab-i" hidden><h2>Employee ID Cards</h2><div class="idg" id="ilist"></div></div>
+</div>
+<footer id="foot2">© 2026 MOHZO · About · Help Center · Terms · Privacy<br>Ye ek demo design hai.<br><a onclick="setMode('alogin')" style="cursor:pointer;color:#90b4ff;display:inline-block;margin-top:8px">Admin Login</a>&nbsp;·&nbsp;<a onclick="setMode('dlogin')" style="cursor:pointer;color:#90b4ff;display:inline-block;margin-top:8px">Delivery Login</a></footer>
+<div class="toast" id="toast"></div>
+<script>
+const cats=[["🛍️","All"],["📱","Mobiles"],["👕","Fashion"],["💻","Electronics"],["🏠","Home"],["🧸","Toys"]];
+const P=[
+["Smartphone 5G 128GB","Mobiles","📱",14999,19999,4.4,"#dbeafe"],
+["Wireless Earbuds","Electronics","🎧",1299,2999,4.2,"#fce7f3"],
+["Smart Watch","Electronics","⌚",1999,4999,4.1,"#e0e7ff"],
+["Men's Casual T-Shirt","Fashion","👕",399,999,4.0,"#fef3c7"],
+["Women's Sneakers","Fashion","👟",899,2199,4.3,"#dcfce7"],
+["Laptop 15.6\" i5","Electronics","💻",42990,58990,4.5,"#e0f2fe"],
+["Mixer Grinder 750W","Home","🍹",2199,4290,4.3,"#ffedd5"],
+["Cotton Bedsheet Set","Home","🛏️",599,1499,4.1,"#fae8ff"],
+["Budget Phone 64GB","Mobiles","📲",7499,9999,4.0,"#fee2e2"],
+["Kids Building Blocks","Toys","🧸",349,799,4.4,"#ecfccb"],
+["Backpack 30L","Fashion","🎒",699,1799,4.2,"#cffafe"],
+["LED Table Lamp","Home","💡",449,999,4.0,"#fef9c3"]];
+let cat="All",bag={},uid=100,shown=24,mShown=20;const MAX=5000;
+const $=id=>document.getElementById(id);
+function nav(){$("cats").innerHTML=cats.map(c=>`<button class="${c[1]==cat?'on':''}" onclick="setCat('${c[1]}')"><span>${c[0]}</span>${c[1]}</button>`).join("")}
+function setCat(c){cat=c;shown=24;nav();render()}
+const pct=p=>Math.round((1-p[3]/p[4])*100);
+const pim=p=>p[9]&&p[9].imgs&&p[9].imgs[0]||"";
+const hasSz=p=>!!(p[9]&&p[9].sizes&&p[9].sizes.length);
+const pth=(p,w)=>pim(p)?`<img src="${pim(p)}" alt="" style="width:${w}px;height:${w}px;object-fit:cover;border-radius:6px;flex:none">`:`<span class="e" style="background:${p[6]};width:${w}px;height:${w}px;display:grid;place-items:center;border-radius:6px;font-size:${Math.round(w*.5)}px;flex:none">${p[2]}</span>`;
+const oth=(o,w,f)=>o[10]?`<img src="${o[10]}" alt="" style="width:${w}px;height:${w}px;object-fit:cover;border-radius:6px;flex:none">`:`<span style="background:${o[7]};width:${w}px;height:${w}px;border-radius:6px;display:grid;place-items:center;font-size:${f}px;flex:none">${o[6]}</span>`;
+const on=o=>`${o[2]}${o[9]?" · Size "+o[9]:""} × ${o[3]}`;
+const hidP=p=>!!(p[9]&&p[9].hidden);
+const isOwn=p=>!!(seller&&seller.status=="active"&&p[7]==seller.name);
+const vis=p=>live(p)&&!hidP(p);
+const mgBar=p=>`<div class="mg"><button onclick="editProd(${p[8]})">✏️ Edit</button><button onclick="toggleHide(${p[8]})">${hidP(p)?"👁 Show":"🙈 Hide"}</button><button onclick="delProd(${p[8]})">🗑</button></div>`;
+function sbarUI(){const e=$("sbar");if(!seller||seller.status!="active"){e.hidden=true;return}const po=orders.filter(o=>o[1]==seller.name&&o[8]=="pending").length;e.hidden=false;
+ e.innerHTML=`<span><b>🏪 ${seller.name}</b> · aap apne products yahin se manage kar sakte hain${po?` · <b>${po} naye order</b>`:""}</span><button onclick="setMode('seller')">Dashboard</button>`}
+function card(p){const id=p[8],own=isOwn(p),hid=hidP(p);return `<div class="card${hid?" hid":""}"><div class="img" style="background:${p[6]}" onclick="openPD(${id})">${pim(p)?`<img src="${pim(p)}" alt="">`:p[2]}</div>${hid?'<span class="hb">Hidden</span>':""}<div class="name" onclick="openPD(${id})">${p[0]}</div><div class="rate"><i>${p[5]} ★</i>Assured</div><div class="price">₹${p[3].toLocaleString("en-IN")}<s>₹${p[4].toLocaleString("en-IN")}</s><em>${pct(p)}% off</em></div>${hasSz(p)?`<button class="add" onclick="openPD(${id})">Select Size</button>`:bag[id]?`<div class="qty"><button onclick="chg('${id}',-1)">−</button><b>${bag[id]}</b><button onclick="chg('${id}',1)">+</button></div>`:`<button class="add" onclick="chg('${id}',1)">Add to Cart</button>`}${own?mgBar(p):""}</div>`}
+function render(){
+ const q=$("q").value.toLowerCase();
+ const list=P.filter(p=>(vis(p)||isOwn(p))&&(cat=="All"||p[1]==cat)&&p[0].toLowerCase().includes(q));
+ $("title").textContent=(cat=="All"?"Top Deals":cat)+" ("+list.length.toLocaleString("en-IN")+")";
+ $("grid").innerHTML=list.length?list.slice(0,shown).map(card).join("")+(list.length>shown?`<button class="more" onclick="shown+=24;render()">Aur products dekhein (${(list.length-shown).toLocaleString("en-IN")} baaki)</button>`:""):"<p style='padding:14px'>Koi product nahi mila.</p>";
+ sbarUI()}
+const V=id=>$(id).value.trim();
+let orders=[],seller=null,mode="buyer",openK=-1;
+const sellers=[{name:"TechWorld",phone:"9876500001",status:"active"},{name:"StyleHub",phone:"9876500002",status:"active"},{name:"HomeNest",phone:"9876500003",status:"pending"}];
+let sidN=10003,cred=null,stab="new",openCred=-1,showPw=false;
+sellers.forEach((x,i)=>{x.id="MZS"+(10001+i);x.pw="Demo@"+(1001+i);hash("Demo@"+(1001+i)).then(h=>x.h=h)});
+const genPw=()=>{const c="ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789",a=new Uint32Array(10);try{crypto.getRandomValues(a)}catch(e){for(let i=0;i<10;i++)a[i]=Math.floor(Math.random()*4e9)}return Array.from(a,x=>c[x%c.length]).join("")};
+const own={Mobiles:"TechWorld",Electronics:"TechWorld",Fashion:"StyleHub",Home:"HomeNest",Toys:"HomeNest"};
+P.forEach((p,i)=>p.push(own[p[1]],i+1));
+const cols=["#dbeafe","#fce7f3","#dcfce7","#fef3c7","#ffedd5","#e0e7ff"];
+const inr=n=>"₹"+n.toLocaleString("en-IN");
+const live=p=>{const x=sellers.find(y=>y.name==p[7]);return x&&x.status=="active"};
+function toast(m){const t=$("toast");t.textContent=m;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),1800)}
+const KYC_API=""; // backend URL, jaise "https://api.yoursite.com/kyc" (neeche reply mein details)
+let vA=false,vP=false,vB=false,panApi=false;
+const VD=[[0,1,2,3,4,5,6,7,8,9],[1,2,3,4,0,6,7,8,9,5],[2,3,4,0,1,7,8,9,5,6],[3,4,0,1,2,8,9,5,6,7],[4,0,1,2,3,9,5,6,7,8],[5,9,8,7,6,0,4,3,2,1],[6,5,9,8,7,1,0,4,3,2],[7,6,5,9,8,2,1,0,4,3],[8,7,6,5,9,3,2,1,0,4],[9,8,7,6,5,4,3,2,1,0]];
+const VP=[[0,1,2,3,4,5,6,7,8,9],[1,5,7,6,2,8,3,0,9,4],[5,8,0,3,7,9,6,1,4,2],[8,9,1,6,0,4,3,5,2,7],[9,4,5,3,1,2,6,8,7,0],[4,2,8,6,5,7,3,9,0,1],[2,7,9,3,8,0,6,4,1,5],[7,0,4,6,9,1,3,2,5,8]];
+const verhoeff=n=>{let c=0;n.split("").reverse().forEach((x,i)=>c=VD[c][VP[i%8][+x]]);return c===0};
+function vs(id,t,ok){const e=$(id);e.textContent=t;e.className="vs "+(ok?"ok":"bad");prog()}
+function prog(){[[vA,"s1"],[vP,"s2"],[vB,"s3"],[!!kyc.selfie,"s4"]].forEach(x=>$(x[1]).className=x[0]?"on":"")}
+$("sa").oninput=()=>{vA=false;$("otpbox").hidden=true;$("ekd").hidden=true;$("vsa").textContent="";prog()};
+$("sp").oninput=()=>{vP=false;panApi=false;$("panman").hidden=true;$("pdecl").checked=false;$("sp").readOnly=false;$("vsp").textContent="";prog()};
+$("ba").oninput=$("bi").oninput=()=>{vB=false;$("vsb").textContent="";prog()};
+function verAadhaar(){const a=V("sa").replace(/\s/g,"");
+ if(!/^[2-9]\d{11}$/.test(a)||!verhoeff(a))return vs("vsa","❌ Ye Aadhaar number sahi nahi hai",0);
+ if(!$("cons").checked)return vs("vsa","Pehle sahmati (consent) ka box tick karein",0);
+ $("otpbox").hidden=false;vs("vsa","OTP bheja gaya (DEMO, OTP: 123456)",1);toast("DEMO OTP: 123456")}
+function confAadhaar(){if($("otp").value.trim()!="123456")return vs("vsa","❌ OTP galat hai",0);
+ $("otpbox").hidden=true;$("otp").value="";$("ekd").hidden=false;vs("vsa","✅ OTP verified. Ab e-KYC details confirm karein",1)}
+function confEkyc(){if(V("kn").length<3||!V("kdob")||V("kad").length<10)return toast("Naam, date of birth aur poora address bharein");
+ vA=true;["sa","kn","kdob","kad"].forEach(i=>$(i).readOnly=true);$("kg").disabled=true;$("ekb").hidden=true;$("cons").disabled=true;vs("vsa","✅ Aadhaar e-KYC complete (DEMO, govt server se connected nahi)",1)}
+async function verPan(){if(!vA)return vs("vsp","Pehle Step 1 (Aadhaar e-KYC) poora karein",0);
+ const p=V("sp").toUpperCase();
+ if(!/^[A-Z]{3}[ABCFGHLJPT][A-Z]\d{4}[A-Z]$/.test(p))return vs("vsp","❌ PAN sahi nahi hai (format ABCDE1234F)",0);
+ $("sp").value=p;$("sp").readOnly=true;
+ if(KYC_API){try{const r=await fetch(KYC_API+"/pan/verify",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({pan:p,name:V("kn"),dob:V("kdob")})});const d=await r.json();
+   if(d.verified&&d.nameMatch!==false){vP=true;panApi=true;return vs("vsp","✅ Income Tax Department se verified (PAN active, naam match)",1)}
+   $("sp").readOnly=false;return vs("vsp","❌ Income Tax record se PAN ya naam match nahi hua",0)}catch(e){toast("Verification server se connect nahi hua, portal se verify karein")}}
+ $("panman").hidden=false;vs("vsp","Ab Income Tax portal par verify karke neeche tick karein",1)}
+function panDecl(c){vP=c.checked;panApi=false;vs("vsp",c.checked?"⏳ Aapne portal par verify kiya. Admin bhi Income Tax portal par cross-check karega":"Income Tax portal par verify karke tick karein",c.checked)}
+function verBank(){const acc=V("ba"),bi=V("bi").toUpperCase();
+ if(!vP)return vs("vsb","Pehle Step 2 (PAN) poora karein",0);
+ if(!/^\d{9,18}$/.test(acc))return vs("vsb","❌ Account number 9 se 18 digit ka hona chahiye",0);
+ if(!/^[A-Z]{4}0[A-Z0-9]{6}$/.test(bi))return vs("vsb","❌ IFSC sahi nahi hai (SBIN0001234)",0);
+ vB=true;$("bi").value=bi;vs("vsb","✅ Bank verified via ₹1 penny-drop (DEMO). Account holder: "+V("kn"),1)}
+function selfieGo(){if(!vB)return vs("vs4","Pehle Step 3 (Bank) poora karein",0);snap("selfie",2)}
+function resetKyc(){vA=vP=vB=panApi=false;$("panman").hidden=true;$("pdecl").checked=false;delete kyc.selfie;["sa","kn","kdob","kad","sp","ba","bi"].forEach(i=>{$(i).readOnly=false;$(i).value=""});$("kg").disabled=false;$("cons").disabled=false;$("cons").checked=false;$("ekb").hidden=false;
+ $("ekd").hidden=true;$("otpbox").hidden=true;["vsa","vsp","vsb","vs4"].forEach(i=>$(i).textContent="");const p=$("pv-selfie");p.style.backgroundImage="";p.textContent="🤳";p.classList.remove("done");prog()}
+const kyc={};
+function shrink(f,cb){const fr=new FileReader();fr.onerror=()=>toast("File read nahi hui, dobara try karein");fr.onload=()=>{const im=new Image();im.onerror=()=>toast("Ye image support nahi hui, JPG ya PNG try karein");im.onload=()=>{const k=Math.min(1,800/Math.max(im.width,im.height)),c=document.createElement("canvas");c.width=im.width*k;c.height=im.height*k;c.getContext("2d").drawImage(im,0,0,c.width,c.height);cb(c.toDataURL("image/jpeg",.75))};im.src=fr.result};fr.readAsDataURL(f)}
+function pick(k,cam){const i=document.createElement("input");i.type="file";i.accept="image/*";if(cam)i.setAttribute("capture",cam==2?"user":"environment");
+ i.style.cssText="position:fixed;left:-2000px;top:0;opacity:0";document.body.appendChild(i);
+ i.onchange=()=>{const f=i.files[0];setTimeout(()=>i.remove(),3000);if(!f)return;if(!f.type.startsWith("image/"))return toast("Sirf image file upload karein");
+  shrink(f,d=>{kyc[k]=d;const p=$("pv-"+k);p.style.backgroundImage=`url(${d})`;p.textContent="";p.classList.add("done");if(k=="selfie")vs("vs4","✅ Selfie mil gayi (face match DEMO)",1)})};i.click()}
+let stream=null,camK=null;
+async function snap(k,cam){if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia)return pick(k,cam);
+ try{stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:cam==2?"user":{ideal:"environment"}},audio:false});
+  camK=k;const v=$("cv");v.style.transform=cam==2?"scaleX(-1)":"none";v.srcObject=stream;$("cam").hidden=false;v.play().catch(()=>{})}
+ catch(e){toast("Camera direct nahi khula, phone ka camera app try kar rahe hain");pick(k,cam)}}
+function camClose(){if(stream)stream.getTracks().forEach(t=>t.stop());stream=null;$("cam").hidden=true}
+function camShot(){const v=$("cv");if(!v.videoWidth)return toast("Camera abhi ready nahi hai");const k=Math.min(1,800/Math.max(v.videoWidth,v.videoHeight)),c=document.createElement("canvas");
+ c.width=v.videoWidth*k;c.height=v.videoHeight*k;c.getContext("2d").drawImage(v,0,0,c.width,c.height);const d=c.toDataURL("image/jpeg",.8);
+ kyc[camK]=d;const p=$("pv-"+camK);p.style.backgroundImage=`url(${d})`;p.textContent="";p.classList.add("done");if(camK=="selfie")vs("vs4","✅ Live selfie li gayi (face match DEMO)",1);camClose();toast("Photo le li gayi ✅")}
+async function signup(){const n=clean(V("store"));
+ if(!n)return toast("Store ka naam daalein");if(!/^[6-9]\d{9}$/.test(V("ph")))return toast("Sahi 10 digit mobile number daalein");
+ const miss=[[vA,"Step 1 (Aadhaar e-KYC)"],[vP,"Step 2 (PAN)"],[vB,"Step 3 (Bank)"],[!!kyc.selfie,"Step 4 (Live selfie)"]].find(x=>!x[0]);
+ if(miss)return toast(miss[1]+" poora karein");
+ const a=V("sa").replace(/\s/g,""),ac=V("ba");
+ const pw=genPw(),rec={id:"MZS"+(++sidN),pw,h:await hash(pw),name:n,phone:V("ph"),status:"pending",kyc:{fullName:V("kn"),dob:V("kdob"),gender:$("kg").value,address:V("kad"),aadhaar:"XXXX XXXX "+a.slice(-4),pan:V("sp").toUpperCase(),panApi,govP:panApi,acc:"XXXXXX"+ac.slice(-4),ifsc:V("bi").toUpperCase(),img:{selfie:kyc.selfie},at:new Date().toLocaleString("en-IN")}};
+ seller=rec;cred={id:rec.id,pw};sellers.push(rec);toast("Seller account ban gaya. Login ID aur password neeche hai 🔑");sellerUI()}
+function setSTab(t){stab=t;sellerUI()}
+async function sellerLogin(){const id=V("sid").toUpperCase(),x=sellers.find(y=>y.id==id);
+ if(!x||!x.h||x.h!=await hash($("spw").value))return toast("Seller ID ya password galat hai");
+ if(x.status=="rejected")return toast("Aapka seller account reject ho gaya hai. Admin se sampark karein");
+ seller=x;cred=null;$("sid").value=$("spw").value="";toast("Welcome, "+x.name+" 🏪");sellerUI();render()}
+function sellerLogout(){seller=null;cred=null;stab="login";sellerUI();render();toast("Seller logout ho gaya")}
+function copyCred(){const t="MOHZO Seller ID: "+cred.id+"\nPassword: "+cred.pw,f=()=>toast("Copy nahi hua, manually note karein");try{navigator.clipboard.writeText(t).then(()=>toast("Copy ho gaya ✅"),f)}catch(e){f()}}
+async function resetPw(i){const x=sellers[i],pw=genPw();x.pw=pw;x.h=await hash(pw);openCred=i;showPw=true;adminUI();toast("Naya password ban gaya. Seller ko bhej dein")}
+function tc(i){openCred=openCred==i?-1:i;showPw=false;adminUI()}
+const credBox=(x,i)=>`<div class="kyc"><div class="kv"><span>Seller ID</span><b>${x.id}</b></div><div class="kv"><span>Password</span><b>${showPw?x.pw:"••••••••••"}</b></div><div class="vr"><button type="button" onclick="showPw=!showPw;adminUI()">${showPw?"🙈 Hide":"👁 Show"} password</button><button type="button" onclick="copySeller(${i})">Copy</button></div></div>`;
+function copySeller(i){const x=sellers[i],f=()=>toast("Copy nahi hua, manually note karein");try{navigator.clipboard.writeText("MOHZO Seller ID: "+x.id+"\nPassword: "+x.pw).then(()=>toast("Copy ho gaya ✅"),f)}catch(e){f()}}
+function sellerUI(){$("stabs").hidden=!!seller;$("slog").hidden=!!seller||stab!="login";$("reg").hidden=!!seller||stab!="new";$("dash").hidden=!seller;$("t-sl").className=stab=="login"?"on":"";$("t-sn").className=stab=="new"?"on":"";if(!seller)return;
+ $("credbox").hidden=!cred;if(cred)$("credbox").innerHTML=`<b>🔑 Aapka Seller Login</b><div class="kv" style="margin-top:6px"><span>Seller ID</span><b>${cred.id}</b></div><div class="kv"><span>Password</span><b>${cred.pw}</b></div><p style="color:#d33;font-size:12px;margin:6px 0">Ye password sirf abhi dikh raha hai. Copy ya note kar lein. Baad mein sirf admin reset kar sakta hai.</p><div class="vr"><button type="button" onclick="copyCred()">Copy</button><button type="button" style="background:var(--green)" onclick="cred=null;sellerUI()">Maine save kar liya</button></div>`;
+ const my=orders.filter(o=>o[1]==seller.name);
+ $("sname").innerHTML="🏪 "+seller.name+`<span class="badge b-${seller.status}">${seller.status}</span><br><small style="font-weight:400;color:var(--muted)">Seller ID: ${seller.id}</small>`;
+ $("sp").textContent=mine().length.toLocaleString("en-IN")+" / 5,000";$("so").textContent=my.length;$("sr").textContent=inr(my.filter(o=>ok8(o)).reduce((a,o)=>a+o[0],0));
+ $("sord").innerHTML=my.length?my.slice().reverse().map(o=>{const ix=orders.indexOf(o);return `<div class="row wrap">${oth(o,56,30)}<span class="n">${on(o)} · <b>${inr(o[0])}</b><span class="badge b-${o[8]}">${sl(o[8])}</span><br><small>👤 ${o[4].name} · ${o[4].phone}<br>📍 ${o[4].ty}: ${o[4].addr}<br>Order ${o[5]}</small></span>${sellerActs(o,ix)}</div>`}).join(""):"<div class='row'>Abhi tak koi order nahi aaya.</div>";
+ const ql=$("ms").value.toLowerCase(),mp=mine().filter(p=>p[0].toLowerCase().includes(ql));
+ $("mine").innerHTML=mp.slice(0,mShown).map(p=>`<div class="row wrap">${pth(p,44)}<span class="n">${p[0]}${hidP(p)?' <span class="badge b-suspended">hidden</span>':""}<br><small>${p[1]} · ${inr(p[3])} <s>${inr(p[4])}</s> · ${pct(p)}% off${hasSz(p)?" · "+p[9].sizes.join("/"):""}</small></span><div class="act"><button class="ok" onclick="editProd(${p[8]})">Edit</button><button class="warn" onclick="toggleHide(${p[8]})">${hidP(p)?"Show":"Hide"}</button><button onclick="delProd(${p[8]})">Delete</button></div></div>`).join("")+(mp.length>mShown?`<button class="more" onclick="mShown+=20;sellerUI()">Aur dikhayein (${(mp.length-mShown).toLocaleString("en-IN")} baaki)</button>`:"")||"<div class='row'>Koi product nahi.</div>"}
+const mine=()=>P.filter(p=>p[7]==seller.name);
+const STEPS=[["placed","Order Placed","🛒"],["accepted","Seller ne Accept kiya","✅"],["printed","Label Print / Packed","🖨️"],["dispatched","Seller ne Dispatch kiya","📦"],["received","Delivery Partner ne Receive kiya","🤝"],["out","Out for Delivery","🚚"],["delivered","Delivered","🎉"]];
+const SL={pending:"pending",accepted:"accepted",printed:"packed",dispatched:"dispatched",received:"picked up",out:"out for delivery",delivered:"delivered",rejected:"rejected"},sl=x=>SL[x]||x;
+const ok8=o=>o[8]!="pending"&&o[8]!="rejected";
+const nowT=()=>new Date().toLocaleString("en-IN",{day:"numeric",month:"short",hour:"numeric",minute:"2-digit"});
+const OM={accepted:"Order accept ho gaya ✅",rejected:"Order reject ho gaya",printed:"Label print ho gaya 🖨️",dispatched:"Order dispatch ho gaya 📦 Delivery boy pickup karega"};
+function setOrd(i,st){orders[i][8]=st;orders[i][11].push([st,nowT()])}
+function ordSt(i,st){if(!orders[i])return;setOrd(i,st);sellerUI();sbarUI();toast(OM[st]||"Update ho gaya")}
+const sellerActs=(o,ix)=>o[8]=="pending"?`<div class="act"><button class="ok" onclick="ordSt(${ix},'accepted')">Accept</button><button onclick="ordSt(${ix},'rejected')">Reject</button></div>`
+ :o[8]=="accepted"?`<div class="act"><button class="ok" onclick="openLabel(${ix})">🖨 Print Label</button></div>`
+ :o[8]=="printed"?`<div class="act"><button class="ok" onclick="ordSt(${ix},'dispatched')">📦 Dispatch</button><button class="warn" onclick="openLabel(${ix})">Reprint</button></div>`
+ :o[8]=="dispatched"?`<small style="color:var(--muted);flex-basis:100%">Delivery boy ke pickup ka intezaar…</small>`:"";
+const bars=t=>{let x=0,r="";for(const c of t+"|"+t){const n=c.charCodeAt(0);for(let b=0;b<7;b++){const w=1+((n>>b)&1);if(b%2==0)r+=`<rect x="${x}" y="0" width="${w}" height="48"/>`;x+=w+1}}return `<svg viewBox="0 0 ${x} 48" preserveAspectRatio="none" style="width:100%;height:48px;fill:#000">${r}</svg>`};
+let labIx=-1;
+function openLabel(ix){const o=orders[ix];if(!o)return;labIx=ix;const b=o[4];
+ $("lbl").innerHTML=`<div style="border:2px solid #000;padding:10px;font-family:monospace;font-size:13px"><div style="display:flex;justify-content:space-between;align-items:center"><b style="font-size:22px">MOHZO</b><b>COD ${inr(o[0])}</b></div><hr>
+ <div><b>SHIP TO:</b><br>${b.name}<br>Ph: ${b.phone}<br>${b.addr}</div><hr><div><b>FROM:</b> ${o[1]}</div><hr>
+ <div><b>ITEM:</b> ${o[2]}${o[9]?" · Size "+o[9]:""} × ${o[3]}</div><div>Order: <b>${o[5]}</b></div><div style="margin-top:8px">${bars(o[5])}</div><div style="text-align:center;letter-spacing:3px">${o[5]}</div></div>`;
+ $("lab").hidden=false}
+function closeLabel(){$("lab").hidden=true}
+function doPrint(){if(orders[labIx]&&orders[labIx][8]=="accepted")ordSt(labIx,"printed");setTimeout(()=>{try{window.print()}catch(e){toast("Print dialog nahi khula, browser menu se Print karein")}},150)}
+let trkIx=-1;
+function openTrk(ix){if(!orders[ix])return;trkIx=ix;$("trk").hidden=false;trkRender()}
+function closeTrk(){$("trk").hidden=true}
+function trkRender(){const o=orders[trkIx];if(!o)return;const st=o[8],cur=st=="pending"?0:STEPS.findIndex(x=>x[0]==st),log=Object.fromEntries(o[11]),rd=riders.find(x=>x.id==o[13]);
+ let h=`<div style="display:flex;justify-content:space-between;align-items:center"><b style="font-size:16px">📍 Order Track</b><a class="lk" onclick="closeTrk()">✕ Close</a></div><div class="row">${oth(o,48,26)}<span class="n">${on(o)}<br><small>Order ${o[5]} · ${inr(o[0])} (Cash on Delivery)</small></span></div>`;
+ if(st=="rejected")h+=`<div class="vs bad" style="font-size:14px">❌ Seller ne ye order reject kar diya${log.rejected?" ("+log.rejected+")":""}</div>`;
+ else{h+=`<div class="tl">${STEPS.map((x,i)=>`<div class="tls ${i<cur||st=="delivered"?"done":i==cur?"cur":""}"><span class="dot">${i<cur||st=="delivered"?"✓":""}</span><div><b>${x[2]} ${x[1]}</b><br><small>${log[x[0]]||""}</small></div></div>`).join("")}</div>`;
+  if(["dispatched","received","out"].includes(st))h+=`<div class="sum">🔐 Delivery OTP: <b style="font-size:20px;letter-spacing:4px">${o[12]}</b><small style="color:var(--muted)">Ye OTP delivery boy ko tabhi batayein jab parcel mil jaye.</small></div>`;
+  if(rd&&st!="delivered")h+=`<div class="sum">🚚 Delivery partner: <b>${rd.name}</b><a class="gl" href="tel:${rd.phone}">📞 ${rd.phone}</a></div>`;
+  if(st=="out")h+=`<div class="vs ok" style="font-size:14px">🚚 Aapka parcel Out for Delivery hai. Jaldi aap tak pahunchega.</div>`;
+  if(st=="delivered")h+=`<div class="vs ok" style="font-size:14px">🎉 Order deliver ho gaya. Shukriya!</div>`}
+ $("trkc").innerHTML=h}
+const riders=[{id:"DLV101",name:"Rahul Kumar",phone:"9800000101",pw:"Deliver@101"},{id:"DLV102",name:"Amit Singh",phone:"9800000102",pw:"Deliver@102"}];
+let rdr=null,atab="s",ridN=102,rdocs={},openR=-1,showRP=false;
+const fd=d=>d.toLocaleDateString("en-IN",{day:"numeric",month:"short",year:"numeric"}),RPI={photo:"👤",pan:"💳",af:"🪪",ab:"🪪",dlf:"🚗",dlb:"🚗"};
+const RD=[["photo","Passport photo"],["pan","PAN card"],["af","Aadhaar front"],["ab","Aadhaar back"],["dlf","Licence front"],["dlb","Licence back"]];
+riders.forEach(x=>{x.status="active";x.emp="MZE-"+x.id.slice(3);x.joined=fd(new Date());const v=new Date();v.setFullYear(v.getFullYear()+1);x.valid=fd(v);x.bg="";x.addr=""});
+const idFront=x=>`<div class="idc"><div class="idh"><b>MOHZO</b><span>DELIVERY PARTNER</span></div><div class="idb">${x.docs?`<img src="${x.docs.photo}" alt="" class="idp">`:`<div class="idp av2">${x.name[0]}</div>`}<div class="idn">${x.name}</div><div class="ids">Delivery Executive</div><table class="idt"><tr><td>Employee ID</td><td><b>${x.emp}</b></td></tr><tr><td>Mobile</td><td>${x.phone}</td></tr><tr><td>Blood Group</td><td>${x.bg||"—"}</td></tr><tr><td>Joined</td><td>${x.joined}</td></tr><tr><td>Valid Till</td><td>${x.valid}</td></tr></table>${bars(x.emp)}<div class="idf">${x.emp}</div></div></div>`;
+const idBack=x=>`<div class="idc"><div class="idh"><b>MOHZO</b><span>EMPLOYEE ID CARD</span></div><div class="idb" style="font-size:11px;text-align:left"><p><b>Address:</b> ${x.addr||"—"}</p><p><b>Driving Licence:</b> ${x.dl||"—"}</p><p>This card is the property of MOHZO. If found, please return it to MOHZO.</p><div class="idsg">Authorised Signatory</div></div></div>`;
+function openIdCard(i){const x=riders[i];if(!x)return;labIx=-1;$("lbl").innerHTML=idFront(x)+idBack(x);$("lab").hidden=false}
+function setATab(t){atab=t;adminUI()}
+function toggleRReg(){$("rreg").hidden=!$("rreg").hidden}
+function rpick(k){const i=document.createElement("input");i.type="file";i.accept="image/*";i.style.cssText="position:fixed;left:-2000px;opacity:0";document.body.appendChild(i);
+ i.onchange=()=>{const f=i.files[0];setTimeout(()=>i.remove(),3000);if(!f)return;if(!f.type.startsWith("image/"))return toast("Sirf image file upload karein");shrink(f,d=>{rdocs[k]=d;const p=$("rpv-"+k);p.style.backgroundImage=`url(${d})`;p.textContent="";p.classList.add("done")})};i.click()}
+function registerRider(){const n=clean(V("rn")),ph=V("rph"),ad=clean(V("rad")),pan=V("rpan").toUpperCase(),aa=V("raad").replace(/\s/g,""),dl=V("rdl").toUpperCase().replace(/[\s-]/g,""),dx=V("rdlx");
+ if(n.length<3)return toast("Delivery boy ka full name daalein");
+ if(!/^[6-9]\d{9}$/.test(ph))return toast("Sahi 10 digit mobile number daalein");
+ if(riders.some(x=>x.phone==ph))return toast("Ye mobile number pehle se registered hai");
+ if(ad.length<10)return toast("Poora address daalein");
+ if(!/^[A-Z]{3}[ABCFGHLJPT][A-Z]\d{4}[A-Z]$/.test(pan))return toast("PAN sahi format mein daalein (ABCDE1234F)");
+ if(!/^[2-9]\d{11}$/.test(aa)||!verhoeff(aa))return toast("Aadhaar number sahi nahi hai");
+ if(!/^[A-Z]{2}\d{2}(19|20)\d{2}\d{7}$/.test(dl))return toast("Driving licence number sahi format mein daalein (MH1420110062821)");
+ if(!dx||new Date(dx)<=new Date())return toast("Driving licence ki expiry date aaj ke baad ki honi chahiye");
+ const miss=RD.find(x=>!rdocs[x[0]]);if(miss)return toast(miss[1]+" upload karein");
+ const pw=genPw(),id="DLV"+(++ridN),v=new Date();v.setFullYear(v.getFullYear()+1);
+ riders.push({id,name:n,phone:ph,pw,status:"active",emp:"MZE-"+id.slice(3),bg:$("rbg").value,addr:ad,pan,aad:"XXXX XXXX "+aa.slice(-4),dl,dlx:dx,docs:{...rdocs},joined:fd(new Date()),valid:fd(v)});
+ ["rn","rph","rad","rpan","raad","rdl","rdlx"].forEach(i=>$(i).value="");$("rbg").value="";rdocs={};
+ document.querySelectorAll('[id^="rpv-"]').forEach(p=>{p.style.backgroundImage="";p.classList.remove("done");p.textContent=RPI[p.id.slice(4)]});
+ $("rreg").hidden=true;$("rcred").hidden=false;const ix=riders.length-1;
+ $("rcred").innerHTML=`<b>🔑 ${n} ka Delivery Login</b><div class="kv" style="margin-top:6px"><span>Delivery ID</span><b>${id}</b></div><div class="kv"><span>Password</span><b>${pw}</b></div><div class="kv"><span>Employee ID</span><b>MZE-${id.slice(3)}</b></div><small style="color:var(--muted)">Ye ID aur password delivery boy ko de dein. Details mein baad mein bhi dekh sakte hain.</small><div class="vr"><button type="button" onclick="copyRider(${ix})">Copy</button><button type="button" onclick="openIdCard(${ix})">🪪 ID Card</button><button type="button" style="background:var(--green)" onclick="$('rcred').hidden=true">Theek hai</button></div>`;
+ openR=-1;adminUI();toast("Delivery boy register ho gaya ✅")}
+function copyRider(i){const x=riders[i],f=()=>toast("Copy nahi hua, manually note karein");try{navigator.clipboard.writeText("MOHZO Delivery ID: "+x.id+"\nPassword: "+x.pw).then(()=>toast("Copy ho gaya ✅"),f)}catch(e){f()}}
+function tr(i){openR=openR==i?-1:i;showRP=false;adminUI()}
+function rSt(i){const x=riders[i];x.status=x.status=="active"?"suspended":"active";if(x.status=="suspended"&&rdr==x)rdr=null;adminUI();toast(x.status=="active"?"Delivery boy active":"Delivery boy suspend ho gaya")}
+function rDel(i){const x=riders[i];if(rdr==x)rdr=null;riders.splice(i,1);openR=-1;adminUI();toast("Delivery boy remove ho gaya")}
+function rReset(i){riders[i].pw=genPw();showRP=true;adminUI();toast("Naya password ban gaya")}
+function zr(i,k){$("zimg").src=riders[i].docs[k];$("zoom").hidden=false}
+const rBox=(x,i)=>`<div class="kyc"><div class="kv"><span>Delivery ID</span><b>${x.id}</b></div><div class="kv"><span>Password</span><b>${showRP?x.pw:"••••••••••"}</b></div><div class="vr"><button type="button" onclick="showRP=!showRP;adminUI()">${showRP?"🙈 Hide":"👁 Show"}</button><button type="button" onclick="copyRider(${i})">Copy</button><button type="button" style="background:#f59e0b" onclick="rReset(${i})">Reset password</button></div>
+ ${x.docs?`<div class="kv"><span>Address</span><b style="text-align:right;max-width:65%">${x.addr}</b></div><div class="kv"><span>Blood group</span><b>${x.bg||"—"}</b></div><div class="kv"><span>PAN</span><b>${x.pan}</b></div><div class="kv"><span>Aadhaar</span><b>${x.aad}</b></div><div class="kv"><span>Driving licence</span><b>${x.dl}</b></div><div class="kv"><span>Licence expiry</span><b>${x.dlx}</b></div><div class="thumbs">${RD.map(d=>`<figure><img src="${x.docs[d[0]]}" alt="" onclick="zr(${i},'${d[0]}')">${d[1]}</figure>`).join("")}</div>`:`<small style="color:var(--muted)">Demo delivery boy, documents nahi hain.</small>`}</div>`;
+function riderUI(){const dn=x=>orders.filter(o=>o[13]==x.id&&o[8]=="delivered").length;
+ $("r1").textContent=riders.length;$("r2").textContent=riders.filter(x=>x.status=="active").length;$("r3").textContent=orders.filter(o=>o[8]=="delivered").length;
+ $("rlist").innerHTML=riders.length?riders.map((x,i)=>`<div class="row wrap">${x.docs?`<img src="${x.docs.photo}" alt="" style="width:46px;height:46px;border-radius:50%;object-fit:cover;flex:none">`:`<span class="av">${x.name[0]}</span>`}<span class="n">${x.name}<span class="badge b-${x.status=="active"?"active":"suspended"}">${x.status}</span><br><small>${x.id} · ${x.emp} · ${x.phone} · ${dn(x)} delivered</small></span><div class="act"><button class="ok" onclick="tr(${i})">${openR==i?"Hide":"Details"}</button><button class="ok" onclick="openIdCard(${i})">🪪 ID Card</button><button class="warn" onclick="rSt(${i})">${x.status=="active"?"Suspend":"Activate"}</button><button onclick="rDel(${i})">Remove</button></div>${openR==i?rBox(x,i):""}</div>`).join(""):"<div class='row'>Abhi koi delivery boy nahi.</div>"}
+function idUI(){$("ilist").innerHTML=riders.length?riders.map((x,i)=>`<div>${idFront(x)}<button class="pay" style="margin-top:4px" onclick="openIdCard(${i})">🖨 Print ID Card</button></div>`).join(""):"<div class='row'>Abhi koi employee nahi.</div>"}
+function riderLogin(){const x=riders.find(y=>y.id==V("did").toUpperCase()&&y.pw==$("dpw").value);if(!x)return toast("Delivery ID ya password galat hai");
+ if(x.status=="suspended")return toast("Aapka account suspend hai. Admin se sampark karein");rdr=x;$("did").value=$("dpw").value="";setMode("delivery")}
+function dLogout(){rdr=null;setMode("buyer")}
+const dRow=(o,i)=>`<div class="row wrap">${oth(o,50,26)}<span class="n">${on(o)} · COD <b>${inr(o[0])}</b><span class="badge b-${o[8]}">${sl(o[8])}</span><br><small>👤 ${o[4].name} · <a class="gl" href="tel:${o[4].phone}">${o[4].phone}</a><br>📍 ${o[4].addr}<br>Seller: ${o[1]} · Order ${o[5]}</small></span>${
+ o[8]=="dispatched"?`<div class="act"><button class="ok" onclick="dAct(${i},'received')">🤝 Receive parcel</button></div>`
+ :o[8]=="received"?`<div class="act"><button class="ok" onclick="dAct(${i},'out')">🚚 Out for Delivery</button></div>`
+ :o[8]=="out"?`<div class="act"><input class="ot" id="otp${i}" placeholder="Buyer OTP" inputmode="numeric" maxlength="4"><button class="ok" onclick="dDeliver(${i})">✅ Delivered</button></div>`:""}</div>`;
+function deliveryUI(){if(!rdr)return;$("dname").textContent=rdr.name+" ("+rdr.id+")";
+ const q=orders.map((o,i)=>[o,i]).filter(x=>x[0][8]=="dispatched"),m=orders.map((o,i)=>[o,i]).filter(x=>x[0][13]==rdr.id);
+ $("d1").textContent=q.length;$("d2").textContent=m.filter(x=>x[0][8]!="delivered").length;$("d3").textContent=m.filter(x=>x[0][8]=="delivered").length;
+ $("dq").innerHTML=q.length?q.map(x=>dRow(x[0],x[1])).join(""):"<div class='row'>Abhi koi parcel pickup ke liye ready nahi hai.</div>";
+ $("dm").innerHTML=m.length?m.reverse().map(x=>dRow(x[0],x[1])).join(""):"<div class='row'>Abhi koi delivery nahi.</div>"}
+function dAct(i,st){if(st=="received")orders[i][13]=rdr.id;setOrd(i,st);deliveryUI();toast(st=="received"?"Parcel receive ho gaya 🤝":"Out for Delivery 🚚")}
+function dDeliver(i){if($("otp"+i).value.trim()!=orders[i][12])return toast("OTP galat hai. Buyer se sahi OTP lein");setOrd(i,"delivered");deliveryUI();toast("Order delivered ho gaya 🎉")}
+const CATS=["Mobiles","Fashion","Electronics","Home","Toys"],CE={Mobiles:"📱",Fashion:"👕",Electronics:"🎧",Home:"🏠",Toys:"🧸"};
+function addMany(rows){if(seller.status!="active"){toast("Admin approval ke baad hi product add hoga");return null}
+ const room=Math.max(0,MAX-mine().length),take=rows.slice(0,room);
+ const arr=take.map((x,i)=>[x.n,x.c,x.e||CE[x.c],x.p,Math.max(x.m||x.p,x.p),x.r||+(3.6+Math.random()*1.1).toFixed(1),cols[i%6],seller.name,++uid,x.x||{}]);
+ P.unshift(...arr);sellerUI();sync();return{added:arr.length,over:rows.length-arr.length}}
+const clean=t=>t.replace(/[<>]/g,""),num=id=>parseFloat($(id).value)||0;
+let pimgs=[];
+function pimRender(){$("pims").innerHTML=pimgs.map((u,i)=>`<div style="background-image:url(${u})"><b onclick="pimDel(${i})">×</b></div>`).join("")}
+function pimDel(i){pimgs.splice(i,1);pimRender()}
+function pickImg(g,rn){g=g||(()=>pimgs);rn=rn||pimRender;if(g().length>=4)return toast("Maximum 4 images hi add ho sakti hain");const i=document.createElement("input");i.type="file";i.accept="image/*";i.multiple=true;i.style.cssText="position:fixed;left:-2000px;opacity:0";document.body.appendChild(i);
+ i.onchange=()=>{const fs=[...i.files].filter(f=>f.type.startsWith("image/")).slice(0,4-g().length);setTimeout(()=>i.remove(),3000);fs.forEach(f=>shrink(f,d=>{const a=g();if(a.length<4){a.push(d);rn()}}))};i.click()}
+let editId=null,eimgs=[];
+function eimRender(){$("epims").innerHTML=eimgs.map((u,i)=>`<div style="background-image:url(${u})"><b onclick="eimDel(${i})">×</b></div>`).join("")}
+function eimDel(i){eimgs.splice(i,1);eimRender()}
+function editProd(id){const p=P.find(x=>x[8]==id);if(!p||!isOwn(p))return;editId=id;const X=p[9]||{};
+ $("et").value=p[0];$("eds").value=X.desc||"";$("ec").value=p[1];$("es").value=(X.sizes||[]).join(", ");$("em").value=p[4];$("ep").value=p[3];$("edc").value=pct(p);eimgs=[...(X.imgs||[])];eimRender();$("ed").hidden=false}
+function closeEd(){$("ed").hidden=true;editId=null}
+function e1(){const m=num("em"),d=Math.min(num("edc"),95);if(m>0)$("ep").value=Math.round(m*(1-d/100))}
+function e2(){const m=num("em"),p=num("ep");if(m>0&&p>0)$("edc").value=Math.max(0,Math.round((1-p/m)*100))}
+function saveEd(){const p=P.find(x=>x[8]==editId);if(!p)return closeEd();const n=clean(V("et")),m=num("em"),pr=num("ep");
+ if(!n)return toast("Product title daalein");if(!(m>0)||!(pr>0)||pr>m)return toast("MRP aur selling price sahi daalein (price MRP se zyada nahi)");
+ const sizes=[...new Set(clean(V("es")).split(",").map(x=>x.trim().slice(0,10)).filter(Boolean))].slice(0,12);
+ p[0]=n;p[1]=$("ec").value;p[3]=pr;p[4]=m;p[9]={...(p[9]||{}),desc:clean($("eds").value.trim()),sizes,imgs:[...eimgs]};
+ Object.keys(bag).forEach(k=>{const z=split(k);if(z.id==editId&&(sizes.length?!sizes.includes(z.sz):z.sz))delete bag[k]});
+ closeEd();sellerUI();sync();toast("Product update ho gaya ✅")}
+function toggleHide(id){const p=P.find(x=>x[8]==id);if(!p||!isOwn(p))return;p[9]=p[9]||{};p[9].hidden=!p[9].hidden;if(p[9].hidden)dropBag(id);sellerUI();sync();toast(p[9].hidden?"Product buyers se chhupa diya":"Product ab buyers ko dikhega")}
+function calcP(){const m=num("fm"),d=Math.min(num("fdc"),95);if(m>0&&$("fdc").value!=="")$("fp").value=Math.round(m*(1-d/100))}
+function calcD(){const m=num("fm"),p=num("fp");if(m>0&&p>0)$("fdc").value=Math.max(0,Math.round((1-p/m)*100))}
+function addProd(){const n=clean(V("fn")),m=num("fm"),p=num("fp");
+ if(!n)return toast("Product title daalein");if(!(m>0))return toast("MRP daalein");if(!(p>0)||p>m)return toast("Selling price 0 se zyada aur MRP se kam ya barabar hona chahiye");
+ const sizes=[...new Set(clean(V("fs")).split(",").map(x=>x.trim().slice(0,10)).filter(Boolean))].slice(0,12);
+ const r=addMany([{n,c:$("fc").value,p,m,e:V("fe"),r:4.0,x:{desc:clean($("fd").value.trim()),sizes,imgs:[...pimgs]}}]);
+ if(!r)return;if(!r.added)return toast("5,000 products ki limit poori ho gayi");
+ ["fn","fd","fs","fm","fdc","fp","fe"].forEach(i=>$(i).value="");pimgs=[];pimRender();toast("Product live ho gaya ✅")}
+function bst(t,ok){const e=$("bst");e.textContent=t;e.className="vs "+(ok?"ok":"bad")}
+function bulkAdd(){const lines=$("bulk").value.split(/\r?\n/).map(l=>l.trim()).filter(Boolean);if(!lines.length)return bst("Pehle products ki list paste karein",0);
+ const rows=[];let bad=0;lines.forEach((l,i)=>{const f=l.split(/[,\t]/).map(x=>x.trim()),c=CATS.find(k=>k.toLowerCase()==(f[1]||"").toLowerCase()),p=parseFloat((f[2]||"").replace(/[^\d.]/g,"")),m=parseFloat((f[3]||"").replace(/[^\d.]/g,""));
+  if(!f[0]||!c||!(p>0)){if(i>0||!/name|naam/i.test(f[0]||""))bad++;return}rows.push({n:clean(f[0]),c,p,m:m>0?m:p,e:f[4]||"",x:{sizes:(f[5]||"").split("|").map(t=>clean(t.trim()).slice(0,10)).filter(Boolean).slice(0,12),desc:clean(f.slice(6).join(", "))}})});
+ const r=addMany(rows);if(!r)return;$("bulk").value="";
+ bst(`✅ ${r.added.toLocaleString("en-IN")} products add hue`+(bad?` · ${bad} galat lines skip`:"")+(r.over?` · ${r.over} limit (5,000) ki wajah se rok diye`:""),r.added>0)}
+function pickCsv(){const i=document.createElement("input");i.type="file";i.accept=".csv,.txt,text/csv,text/plain";i.style.cssText="position:fixed;left:-2000px;opacity:0";document.body.appendChild(i);
+ i.onchange=()=>{const f=i.files[0];setTimeout(()=>i.remove(),3000);if(!f)return;const fr=new FileReader();fr.onload=()=>{$("bulk").value=fr.result;bst("File load ho gayi. Ab Import Products dabayein",1)};fr.readAsText(f)};i.click()}
+function demoGen(){const n=+$("dn").value,B=["Alpha","Nova","Zenith","Prime","Urban","Royal","Swift","Astra"],N={Mobiles:["Smartphone","5G Phone","Gaming Phone"],Fashion:["T-Shirt","Jeans","Kurta","Sneakers","Jacket"],Electronics:["Earbuds","Power Bank","Smart Watch","Speaker","Keyboard"],Home:["Bedsheet","Table Lamp","Water Bottle","Storage Box","Curtain"],Toys:["Building Blocks","Puzzle","Toy Car","Board Game"]},R={Mobiles:[5000,40000],Fashion:[199,3000],Electronics:[500,15000],Home:[149,4000],Toys:[99,1500]};
+ const rows=[];for(let i=0;i<n;i++){const c=CATS[i%5],w=N[c],[lo,hi]=R[c],p=Math.round(lo+Math.random()*(hi-lo));rows.push({n:`${B[i%8]} ${w[i%w.length]} #${i+1}`,c,p,m:Math.round(p*(1.1+Math.random()*.5))})}
+ const r=addMany(rows);if(r)bst(`✅ ${r.added.toLocaleString("en-IN")} demo products add hue`+(r.over?` · ${r.over} limit ki wajah se rok diye`:""),r.added>0)}
+function delProd(id){const i=P.findIndex(p=>p[8]==id);if(i<0)return;P.splice(i,1);dropBag(id);if(pdSel&&pdSel[8]==id)closePD();sellerUI();sync()}
+let dArm=false;function delAll(){const b=$("dall");if(!dArm){dArm=true;b.textContent="Pakka? Dobara dabayein";setTimeout(()=>{dArm=false;b.textContent="Sabhi products delete karein"},4000);return}
+ dArm=false;b.textContent="Sabhi products delete karein";const keep=P.filter(p=>p[7]!=seller.name);mine().forEach(p=>dropBag(p[8]));P.length=0;P.push(...keep);sellerUI();sync();toast("Saare products delete ho gaye")}
+function adminUI(){["s","r","i"].forEach(k=>{$("atab-"+k).hidden=atab!=k;$("at-"+k).className=atab==k?"on":""});riderUI();idUI();const g=orders.filter(o=>ok8(o)).reduce((a,o)=>a+o[0],0);
+ $("as").textContent=sellers.length;$("ap").textContent=sellers.filter(x=>x.status=="pending").length;$("ag").textContent=inr(g);$("ac").textContent=inr(Math.round(g*.1));
+ $("slist").innerHTML=sellers.map((x,i)=>`<div class="row wrap"><span>🏪</span><span class="n">${x.name}<span class="badge b-${x.status}">${x.status}</span>${x.kyc?'<span class=\"badge b-active\">e-KYC done</span>'+(x.kyc.govP?'':'<span class="badge b-pending">PAN check pending</span>'):'<span class="badge b-suspended">No e-KYC</span>'}<br><small>${x.id} · ${x.phone} · ${P.filter(p=>p[7]==x.name).length} products · ${inr(orders.filter(o=>o[1]==x.name&&ok8(o)).reduce((a,o)=>a+o[0],0))} sales</small></span><div class="act">${x.kyc?`<button class="ok" onclick="tk(${i})">${openK==i?"Hide":"View"} e-KYC</button>`:""}${x.status!="active"?`<button class="ok" onclick="setSt(${i},'active')">Approve</button>`:`<button class="warn" onclick="setSt(${i},'suspended')">Suspend</button>`}${x.status=="pending"?`<button class="warn" onclick="setSt(${i},'rejected')">Reject</button>`:""}<button class="ok" onclick="tc(${i})">🔑 ID / Password</button><button class="warn" onclick="resetPw(${i})">Reset</button><button onclick="delSeller(${i})">Remove</button></div>${openCred==i?credBox(x,i):""}${openK==i&&x.kyc?kycBox(x,i):""}</div>`).join("")}
+function tk(i){openK=openK==i?-1:i;adminUI()}
+function kycBox(x,i){const k=x.kyc,ch=t=>`<span class="badge b-active">✓ ${t}</span>`;
+ return `<div class="kyc"><div class="kv"><span>e-KYC Status</span><span>${ch("Aadhaar")}${ch("PAN")}${ch("Bank")}${ch("Selfie")}</span></div>
+ <div class="kv"><span>Full Name</span><b>${k.fullName}</b></div><div class="kv"><span>DOB · Gender</span><b>${k.dob} · ${k.gender}</b></div>
+ <div class="kv"><span>Address</span><b style="text-align:right;max-width:65%">${k.address}</b></div>
+ <div class="kv"><span>Aadhaar</span><b>${k.aadhaar}</b></div><div class="kv"><span>PAN</span><b>${k.pan}</b></div>
+ <div class="kv"><span>Bank A/c · IFSC</span><b>${k.acc} · ${k.ifsc}</b></div><div class="kv"><span>Submitted</span><b>${k.at}</b></div>
+ <div class="thumbs"><figure><img src="${k.img.selfie}" alt="Live selfie" onclick="zm(${i},'selfie')">Live selfie</figure></div>
+ <div class="gv"><div class="kv"><span>PAN check</span><b>${k.panApi?"✓ Income Tax API se verified":"⏳ Income Tax portal par check baaki"}</b></div>${k.panApi?"":`<a class="gl" href="https://eportal.incometax.gov.in/iec/foservices/#/pre-login/verifyYourPAN/" target="_blank" rel="noopener">🔗 Income Tax portal par PAN verify karein ↗</a><label><input type="checkbox" ${k.govP?"checked":""} onchange="mkPan(${i},this.checked)"> PAN Income Tax portal par verified</label>`}</div>
+ <small style="color:var(--muted)">⚠️ DEMO e-KYC: asli UIDAI, PAN aur bank verification connected nahi hai.</small></div>`}
+function zm(i,k){$("zimg").src=sellers[i].kyc.img[k];$("zoom").hidden=false}
+function mkPan(i,v){sellers[i].kyc.govP=v;adminUI()}
+function setSt(i,st){if(st=="active"&&sellers[i].kyc&&!sellers[i].kyc.govP)return toast("Approve se pehle PAN Income Tax portal par verify karke tick karein");sellers[i].status=st;adminUI();render();sellerUI();toast("Seller "+st+" ho gaya")}
+function delSeller(i){const x=sellers[i];for(let k=P.length-1;k>=0;k--)if(P[k][7]==x.name)P.splice(k,1);if(seller==x)seller=null;sellers.splice(i,1);openK=-1;openCred=-1;adminUI();render();sellerUI()}
+let isAdmin=false;
+function setMode(m){if(m=="admin"&&!isAdmin)m="alogin";if(m=="delivery"&&!rdr)m="dlogin";mode=m;const pub=m=="buyer"||m=="seller";
+ $("top").hidden=!pub;$("foot2").hidden=!pub;$("buyer").hidden=m!="buyer";$("seller").hidden=m!="seller";$("alogin").hidden=m!="alogin";$("admin").hidden=m!="admin";$("dlogin").hidden=m!="dlogin";$("dpanel").hidden=m!="delivery";
+ $("role").textContent=m=="seller"?"🛍️ Buyer Mode":"🏪 Seller Account";
+ if(m=="seller")sellerUI();if(m=="admin")adminUI();if(m=="delivery")deliveryUI();if(m=="buyer")render();scrollTo(0,0)}
+function adminLogin(){if(V("au")=="admin"&&$("apw").value=="admin123"){isAdmin=true;$("au").value=$("apw").value="";setMode("admin")}else toast("Admin ID ya password galat hai")}
+function adminLogout(){isAdmin=false;setMode("buyer")}
+$("role").onclick=()=>setMode(mode=="seller"?"buyer":"seller");
+const split=k=>{const a=String(k).split(":");return{id:a[0],sz:a[1]||""}};
+const items=()=>Object.keys(bag).map(k=>{const z=split(k),p=P.find(x=>x[8]==z.id&&vis(x));return p?{p,sz:z.sz,k,q:bag[k]}:null}).filter(Boolean);
+const dropBag=id=>Object.keys(bag).forEach(k=>{if(split(k).id==id)delete bag[k]});
+function chg(k,d){k=String(k);const p=P.find(x=>x[8]==split(k).id);if(!p)return;if(d>0&&!user){pendingAdd=k;toast("Add to Cart ke liye pehle login karein");openAuth("login");return}
+ bag[k]=(bag[k]||0)+d;if(bag[k]<=0)delete bag[k];if(d>0&&bag[k]==1)toast(p[0]+" cart mein add hua");sync()}
+function rm(k){delete bag[k];sync()}
+function sync(){$("cnt").textContent=items().reduce((a,e)=>a+e.q,0);render();if(!$("drawer").hidden)cartUI();if(!$("pd").hidden)pdRender()}
+function prefill(){if(!user)return;if(!V("cn"))$("cn").value=user.name;if(!V("cp"))$("cp").value=user.phone;if(!V("ce"))$("ce").value=user.email||""}
+function openCart(){$("drawer").hidden=false;$("ok").hidden=true;prefill();cartUI()}
+function closeCart(){$("drawer").hidden=true}
+function cartUI(){const L=items();$("empty").hidden=L.length>0;$("full").hidden=!L.length;$("foot").hidden=!L.length;if(!L.length)return;
+ let t=0,m=0;L.forEach(e=>{t+=e.p[3]*e.q;m+=e.p[4]*e.q});const dl=t>=500?0:40;
+ $("lines").innerHTML=L.map(e=>`<div class="line">${pth(e.p,64)}<div class="n">${e.p[0]}${e.sz?` · Size ${e.sz}`:""}<br><small>${inr(e.p[3])} × ${e.q} = <b>${inr(e.p[3]*e.q)}</b></small><div class="qty s"><button onclick="chg('${e.k}',-1)">−</button><b>${e.q}</b><button onclick="chg('${e.k}',1)">+</button><a onclick="rm('${e.k}')">Remove</a></div></div></div>`).join("");
+ $("sum").innerHTML=`<div>Price<span>${inr(m)}</span></div><div>Discount<span style="color:var(--green)">−${inr(m-t)}</span></div><div>Delivery<span>${dl?inr(dl):"FREE"}</span></div><div class="tot">Total<span>${inr(t+dl)}</span></div><p style="color:var(--green);font-size:13px;margin:6px 0 0">Aapne ${inr(m-t)} bachaye 🎉</p>`;$("pay").textContent=(user?"Place Order · ":"Login & Place Order · ")+inr(t+dl)}
+let pdSel=null,pdSize=null,pdImg=0;
+function openPD(id){const p=P.find(x=>x[8]==id);if(!p)return;pdSel=p;pdSize=null;pdImg=0;$("pd").hidden=false;pdRender()}
+function closePD(){$("pd").hidden=true}
+function pickSize(i){pdSize=pdSel[9].sizes[i];pdRender()}
+function pdKey(){return hasSz(pdSel)?(pdSize?pdSel[8]+":"+pdSize:null):String(pdSel[8])}
+function pdAdd(){const k=pdKey();if(!k)return toast("Pehle size chunein");chg(k,1)}
+function pdRender(){const p=pdSel,X=p[9]||{},im=X.imgs||[],sz=X.sizes||[];
+ $("pdb").innerHTML=`<div class="pdi" style="background:${p[6]}">${im.length?`<img src="${im[pdImg]}" alt="">`:p[2]}</div>${im.length>1?`<div class="pdt">${im.map((u,i)=>`<img src="${u}" alt="" class="${i==pdImg?"on":""}" onclick="pdImg=${i};pdRender()">`).join("")}</div>`:""}
+ <h3>${p[0]}</h3><div class="rate"><i>${p[5]} ★</i>Assured</div><div class="price" style="font-size:20px">${inr(p[3])}<s>${inr(p[4])}</s><em>${pct(p)}% off</em></div>
+ ${sz.length?`<b>Size chunein</b><div class="szs">${sz.map((z,i)=>`<button class="${pdSize==z?"on":""}" onclick="pickSize(${i})">${z}</button>`).join("")}</div>`:""}
+ ${X.desc?`<b>Description</b><p class="pdd">${X.desc}</p>`:""}<small style="color:var(--muted)">Seller: ${p[7]}</small>${isOwn(p)?mgBar(p):""}`;
+ const k=pdKey();$("pdf").innerHTML=k&&bag[k]?`<div class="pdf2"><div class="qty"><button onclick="chg('${k}',-1)">−</button><b>${bag[k]}</b><button onclick="chg('${k}',1)">+</button></div><button class="pay" onclick="closePD();openCart()">Go to Cart</button></div>`:`<button class="pay" onclick="pdAdd()">${sz.length&&!pdSize?"Size chunein":"Add to Cart"}</button>`}
+function placeOrder(){const L=items();if(!L.length)return;if(!user){toast("Order karne ke liye pehle login karein");openAuth("login");return}
+ if(V("cn").length<2)return toast("Apna naam daalein");
+ if(!/^[6-9]\d{9}$/.test(V("cp")))return toast("Sahi 10 digit mobile number daalein");
+ if(V("ce")&&!/^\S+@\S+\.\S+$/.test(V("ce")))return toast("Email sahi nahi hai");
+ if(!/^\d{6}$/.test(V("cpin")))return toast("6 digit pincode daalein");
+ if(!V("cc")||!V("cs")||!V("ch")||!V("ca"))return toast("Address ki saari * fields bharein");
+ const ty=document.querySelector('input[name=aty]:checked').value;
+ const buyer={uid:user.id,name:V("cn"),phone:V("cp"),email:V("ce"),ty,addr:`${V("ch")}, ${V("ca")}${V("cl")?", "+V("cl"):""}, ${V("cc")}, ${V("cs")} - ${V("cpin")}`};
+ const id="MZ"+Math.floor(100000+Math.random()*900000);
+ L.forEach(e=>orders.push([e.p[3]*e.q,e.p[7],e.p[0],e.q,buyer,id,e.p[2],e.p[6],"pending",e.sz,pim(e.p),[["placed",nowT()]],String(Math.floor(1000+Math.random()*9000)),""]));bag={};sync();
+ const d=new Date();d.setDate(d.getDate()+5);
+ $("oid").textContent=id;$("oaddr").innerHTML=`<b>${buyer.name}</b> · ${buyer.phone}<br>${buyer.ty}: ${buyer.addr}<br><small>Delivery: ${d.toLocaleDateString("en-IN",{weekday:"short",day:"numeric",month:"short"})} tak</small>`;
+ $("ok").hidden=false;$("empty").hidden=true;$("full").hidden=true;$("foot").hidden=true}
+let user=null,tab="login",pendingAdd=null;
+const LS={get(k){try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+const users=LS.get("mz_users")||[];
+async function hash(t){try{const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode("mohzo:"+t));return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,"0")).join("")}catch(e){return btoa(unescape(encodeURIComponent(t)))}}
+function updateAcc(){$("acc").textContent=user?"👤 "+user.name.split(" ")[0]:"👤 Login";if(!$("drawer").hidden){prefill();cartUI()}}
+function setTab(t){tab=t;$("t-login").className=t=="login"?"on":"";$("t-signup").className=t=="signup"?"on":"";document.querySelectorAll(".su").forEach(e=>e.hidden=t=="login");$("abtn").textContent=t=="login"?"Login":"Create Account";$("up").autocomplete=t=="login"?"current-password":"new-password"}
+function openAuth(t){$("auth").hidden=false;$("af").hidden=false;$("av").hidden=true;setTab(t||"login")}
+function closeAuth(){$("auth").hidden=true;pendingAdd=null}
+function showAcct(){$("auth").hidden=false;$("af").hidden=true;$("av").hidden=false;$("an").textContent="👤 "+user.name;$("ad").textContent=user.phone+(user.email?" · "+user.email:"");
+ const my=orders.filter(o=>o[4].uid==user.id).reverse();
+ $("ao").innerHTML=my.length?my.map(o=>`<div class="row wrap">${oth(o,44,24)}<span class="n">${on(o)} · <b>${inr(o[0])}</b><span class="badge b-${o[8]}">${sl(o[8])}</span><br><small>Order ${o[5]}</small></span><button class="trkb" onclick="openTrk(${orders.indexOf(o)})">📍 Track</button></div>`).join(""):"<div class='row'>Abhi tak koi order nahi.</div>"}
+async function submitAuth(){const m=V("um"),pw=$("up").value;
+ if(!/^[6-9]\d{9}$/.test(m))return toast("Sahi 10 digit mobile number daalein");
+ if(pw.length<6)return toast("Password kam se kam 6 character ka ho");
+ if(tab=="signup"){if(V("un").length<2)return toast("Apna full name daalein");if(V("ue")&&!/^\S+@\S+\.\S+$/.test(V("ue")))return toast("Email sahi nahi hai");
+  if(pw!=$("up2").value)return toast("Dono password match nahi karte");if(users.find(u=>u.phone==m))return toast("Ye mobile number pehle se registered hai, login karein");
+  const u={id:"u"+Date.now(),name:V("un"),phone:m,email:V("ue"),h:await hash(pw)};users.push(u);LS.set("mz_users",users);user=u;toast("Account ban gaya, welcome "+u.name.split(" ")[0]+" 🎉")}
+ else{const u=users.find(x=>x.phone==m);if(!u||u.h!=await hash(pw))return toast("Mobile number ya password galat hai");user=u;toast("Welcome back, "+u.name.split(" ")[0]+" 👋")}
+ LS.set("mz_sess",user.id);["um","up","up2","un","ue"].forEach(i=>$(i).value="");const pa=pendingAdd;closeAuth();updateAcc();if(pa)chg(pa,1)}
+function logout(){user=null;LS.set("mz_sess",null);bag={};closeAuth();updateAcc();sync();toast("Logout ho gaya")}
+$("acc").onclick=()=>user?showAcct():openAuth("login");
+$("cart").onclick=openCart;
+$("ms").oninput=()=>{mShown=20;sellerUI()};
+$("fm").oninput=()=>{$("fdc").value!==""?calcP():calcD()};$("fdc").oninput=calcP;$("fp").oninput=calcD;
+$("em").oninput=()=>{$("edc").value!==""?e1():e2()};$("edc").oninput=e1;$("ep").oninput=e2;
+$("q").addEventListener("input",()=>{shown=24;render()});
+nav();render();{const sid=LS.get("mz_sess");if(sid)user=users.find(u=>u.id==sid)||null;updateAcc()}
+</script>
+</body>
+</html>
